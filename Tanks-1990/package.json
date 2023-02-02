@@ -1,0 +1,47 @@
+{
+    "name": "tanks-1990",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.ts",
+    "scripts": {
+        "start": "cross-env NODE_ENV=development webpack serve --config ./webpack.dev.js",
+        "build": "cross-env NODE_ENV=production webpack --config ./webpack.prod.js",
+        "lint": "eslint . --ext .ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "keywords": [],
+    "author": "Maxim Khotsin",
+    "license": "ISC",
+    "homepage": "",
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^5.48.1",
+        "@typescript-eslint/parser": "^5.45.1",
+        "clean-webpack-plugin": "^4.0.0",
+        "cross-env": "^7.0.3",
+        "css-loader": "^5.1.0",
+        "css-minimizer-webpack-plugin": "^4.2.2",
+        "eslint": "^8.31.0",
+        "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-config-standard-with-typescript": "^27.0.1",
+        "eslint-plugin-import": "^2.27.4",
+        "eslint-plugin-n": "^15.6.1",
+        "eslint-plugin-promise": "^6.1.1",
+        "html-loader": "^4.2.0",
+        "html-webpack-plugin": "^5.2.0",
+        "mini-css-extract-plugin": "^2.7.2",
+        "prettier": "2.2.1",
+        "sass": "^1.57.1",
+        "sass-loader": "^13.2.0",
+        "style-loader": "^2.0.0",
+        "svg-inline-loader": "^0.8.2",
+        "ts-loader": "^9.4.2",
+        "typescript": "^4.9.4",
+        "webpack": "^5.37.1",
+        "webpack-cli": "^4.5.0",
+        "webpack-dev-server": "^3.11.2",
+        "webpack-merge": "^5.8.0"
+    }
+}
