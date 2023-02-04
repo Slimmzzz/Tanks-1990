@@ -1,5 +1,7 @@
 // @ts-ignore
 import sprite from "../view/sprite.ts"
+// @ts-ignore
+import { MoveStoppers } from "./sampleObstacle.ts"
 
 interface DrawOptions {
   spriteX: number
@@ -16,11 +18,11 @@ export default class Renderer {
   drawStack: DrawOptions[] = []
   tiomeoutID: number | undefined
   isActive: boolean = false
-  
+  moveStoppers: MoveStoppers
   
   constructor(root: HTMLDivElement) {
     this.canvas = root.appendChild(document.createElement('canvas'));
-    this.canvas.width = this.canvas.height = 715;
+    this.canvas.width = this.canvas.height = 832;
     this.canvas.style.border = '1px solid #000';
     this.canvas.style.background = "#000";
     this.ctx = this.canvas.getContext('2d')!;
