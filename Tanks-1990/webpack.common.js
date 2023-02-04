@@ -13,7 +13,7 @@ module.exports = {
     new CleanWebpackPlugin(),
     
     new HtmlWebpackPlugin({
-			title: 'My test page',
+			title: 'Tanks 1990',
       template: './src/index.html',
       filename: 'index.html'
     }),
