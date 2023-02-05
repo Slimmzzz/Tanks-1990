@@ -1,5 +1,7 @@
 // @ts-ignore
 import Renderer from "./Renderer.ts";
+// @ts-ignore
+import { Coords } from "./sampleTank.ts";
 
 type LevelMapEntity = string[];
 
@@ -19,30 +21,18 @@ export class SampleObstacle {
   isBreakable: boolean = false
   canPassThrough: boolean = false
   canShootThrough: boolean = false
+  isUnderLayer: boolean = false
   spriteX: number = 0
   spriteY: number = 0
   _pingRendererTimeoutCallback: () => void
   timeoutID: number = 0
-  moveStoppers: MoveStoppers
+  occupiedCell: Coords
 
   constructor(obstacleOptions: ObstacleOptions, renderer: Renderer) {
     this.renderer = renderer;
     this.x = obstacleOptions.x * 32;
     this.y = obstacleOptions.y * 32;
-    this.moveStoppers = {
-      fromLeft: new Array(32).fill(0).map((_, i) => {
-        return [this.x, this.y + i];
-      }),
-      fromRight: new Array(32).fill(0).map((_, i) => {
-        return [this.x + this.width, this.y + i];
-      }),
-      fromTop: new Array(32).fill(0).map((_, i) => {
-        return [this.x + i, this.y];
-      }),
-      fromBottom: new Array(32).fill(0).map((_, i) => {
-        return [this.x + i, this.y + this.height];
-      }),
-    }
+    this.occupiedCell = {x: obstacleOptions.x, y: obstacleOptions.y}
     switch(obstacleOptions.type) {
       case 'b': // b - brick
         this.isBreakable = true;
@@ -59,6 +49,17 @@ export class SampleObstacle {
         this.canPassThrough = true;
         this.canShootThrough = true;
         break;
+      case 'i': // i - ice
+        this.spriteX = 1116;
+        this.spriteY = 288;
+        this.canPassThrough = true;
+        this.canShootThrough = true;
+        this.isUnderLayer = true;
+        break;
+      case 'w': // w - water
+        this.spriteX = 1052;
+        this.spriteY = 320;
+        this.canShootThrough = true;
     }
     this._pingRendererTimeoutCallback = () => {
       this.renderer.add({
@@ -67,7 +68,8 @@ export class SampleObstacle {
         spriteWidth: this.width,
         spriteHeight: this.height,
         canvasX: this.x,
-        canvasY: this.y
+        canvasY: this.y,
+        isUnderLayer: this.isUnderLayer
       });
       this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
       // if (this.isAlive) {
@@ -86,38 +88,13 @@ export class ObstacleCollection {
   _obstacles: {} = {}
   map: LevelMapEntity[]
   nextObstacleID: number = 1
-  moveStoppers: MoveStoppers
 
   constructor(renderer: Renderer, map?: LevelMapEntity[]) {
     this.renderer = renderer;
     this.map = map || [[]];
-    this.moveStoppers = {
-      fromLeft: [],
-      fromRight: [],
-      fromBottom: [],
-      fromTop: [],
-    }
     if (this.map.length > 1 && this.map[0].length) {
       this.generateLevel();
     }
-  }
-
-  private updateMoveStoppers(obstacles: SampleObstacle[], isObstacleRemoved?: boolean) {
-    if (isObstacleRemoved) {
-      this.moveStoppers.fromLeft = [];
-      this.moveStoppers.fromRight = [];
-      this.moveStoppers.fromBottom = [];
-      this.moveStoppers.fromTop = [];
-    }
-
-    for (let obstacle of obstacles) {
-      this.moveStoppers.fromLeft = this.moveStoppers.fromLeft.concat(obstacle.moveStoppers.fromLeft);
-      this.moveStoppers.fromRight = this.moveStoppers.fromRight.concat(obstacle.moveStoppers.fromRight);
-      this.moveStoppers.fromBottom = this.moveStoppers.fromBottom.concat(obstacle.moveStoppers.fromBottom);
-      this.moveStoppers.fromTop = this.moveStoppers.fromTop.concat(obstacle.moveStoppers.fromTop);
-    }
-
-    this.renderer.moveStoppers = this.moveStoppers;
   }
 
   create(x: number, y: number, type: string) {
@@ -129,8 +106,7 @@ export class ObstacleCollection {
     }
     const obstacle = new SampleObstacle(options, this.renderer);
     this.nextObstacleID += 1;
-    this.updateMoveStoppers([obstacle]);
-
+    this.renderer.addObstacle(obstacle);
     Object.defineProperty(this._obstacles, `${options.id}`, {
       value: obstacle,
       enumerable: true,
@@ -148,11 +124,4 @@ export class ObstacleCollection {
       }
     }
   }
-}
-
-export interface MoveStoppers {
-  fromLeft: number[][]
-  fromRight: number[][]
-  fromBottom: number[][]
-  fromTop: number[][]
 }
