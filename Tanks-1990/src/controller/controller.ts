@@ -12,11 +12,32 @@ import {
   onTankMoveKeyUpFactory
   // @ts-ignore
 } from './eventListeners.ts';
+// @ts-ignore
+import { KeyController, KeyCallbackMap } from "./KeyController.ts";
 
 export default function main() {
   const canvasRoot = document.createElement('div');
-  canvasRoot.setAttribute('style', 'width: max-content; margin: auto');
+  canvasRoot.setAttribute('style', 'width: max-content; margin: auto; position: relative');
   document.body.appendChild(canvasRoot);
+
+  // Debug table start
+  // const debugTable = canvasRoot.appendChild(document.createElement('table'));
+  // debugTable.appendChild(document.createElement('tbody'));
+  // debugTable.cellSpacing = '0';
+  // debugTable.cellPadding = '0';
+  // debugTable.id = 'table';
+  // debugTable.width = '834';
+  // debugTable.style.height = '834px';
+  // const grid = new Array(26).fill(0).map(x => new Array(26).fill(0));
+  //   for (let y = 0; y < grid.length; y++) {
+  //     const tr = debugTable.tBodies[0].appendChild(document.createElement('tr'));
+  //     for (let x = 0; x < grid[y].length; x++) {
+  //       const td = tr.appendChild(document.createElement('td'));
+  //       td.innerHTML = `x: ${x}<br>y: ${y}`;
+  //     }
+  //   }
+  // Debug table end
+
   const renderer = new Renderer(canvasRoot);
   Object.defineProperty(window, '_renderer', { 
     value: renderer,
@@ -24,8 +45,6 @@ export default function main() {
     configurable: true,
   });
 
-  //Нужно учитывать, что длина/ширина canvas равна 65*13, максимально 
-  //возможное положение танка = длина canvas - ширина танка(845 - 65)
   const testTank = new SampleTank({
     x: 832 - 64,
     y: 0,
@@ -38,11 +57,18 @@ export default function main() {
   //   startDirection: 'up',
   //   isEnemy: true
   // }, renderer);
-  const onKeyDownListener = onTankMoveKeyPressFactory(testTank);
-  const onKeyUpListener = onTankMoveKeyUpFactory(testTank);
+  // const onKeyDownListener = onTankMoveKeyPressFactory(testTank);
+  // const onKeyUpListener = onTankMoveKeyUpFactory(testTank);
 
-  window.addEventListener('keydown', onKeyDownListener);
-  window.addEventListener('keyup', onKeyUpListener);
+  // window.addEventListener('keydown', onKeyDownListener);
+  // window.addEventListener('keyup', onKeyUpListener);
+
+  let keyboardController = new KeyController({
+    'w': () => { testTank.move('up'); },
+    's': () => { testTank.move('down'); },
+    'a': () => { testTank.move('left'); },
+    'd': () => { testTank.move('right'); }
+  }, 16);
 
   // Create test obstacles
 
