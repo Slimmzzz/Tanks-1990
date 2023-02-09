@@ -1,5 +1,7 @@
 // @ts-ignore
-import Renderer from "./Renderer.ts";
+import { Bullet } from "./Bullet";
+// @ts-ignore
+import Renderer from "./Renderer";
 
 interface TankOptions {
   x: number
@@ -201,3 +203,12 @@ export default class SampleTank {
   }
 
 }
+
+
+
+
+
+
+
+
+

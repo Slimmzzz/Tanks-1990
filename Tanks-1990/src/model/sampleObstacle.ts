@@ -1,5 +1,6 @@
 // @ts-ignore
-import Renderer from "./Renderer.ts";
+import { Bullet } from "./Bullet";
+import Renderer from "./Renderer";
 // @ts-ignore
 import { Coords } from "./sampleTank.ts";
 
@@ -125,3 +126,4 @@ export class ObstacleCollection {
     }
   }
 }
+
