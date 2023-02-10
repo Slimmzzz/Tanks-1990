@@ -258,6 +258,10 @@ export default class SampleTank {
     }
   }
 
+  shoot() {
+    // TODO: implement shooting logic
+    // Here is a perfect place to create bullet instances
+  }
 
   private initKeyController() {
     const _move = (direction: direction) => {
