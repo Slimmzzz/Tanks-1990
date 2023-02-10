@@ -14,6 +14,8 @@ import {
 } from './eventListeners.ts';
 // @ts-ignore
 import { KeyController, KeyCallbackMap } from "./KeyController.ts";
+// @ts-ignore
+import { direction } from '../interfaces.ts';
 
 export default function main() {
   const canvasRoot = document.createElement('div');
