@@ -24,7 +24,6 @@ export default class SampleTank {
   moveTimeoutID: number = 0
   isEnemy: boolean
   enemyMoveDirection: string | undefined
-  occupiedCells: Coords[]
   isOnIce: boolean = false
   direction: direction
   ignoreKeyboard: boolean = false
@@ -93,33 +92,6 @@ export default class SampleTank {
 
   set isMoving(isMoveKeyPressed: boolean) {
     this._isMoving = isMoveKeyPressed;
-  }
-
-  recalculateOccupiedCells() {
-    this.occupiedCells = [];
-    const upLeft = {x: Math.floor(this.dx / 32), y: Math.floor(this.dy / 32)};
-    const upRight = {x: Math.floor((this.dx + 32) / 32), y: Math.floor(this.dy / 32)};
-    const downLeft = {x: Math.floor(this.dx / 32), y: Math.floor((this.dy + 32) / 32)};
-    const downRight = {x: Math.floor((this.dx + 32) / 32), y: Math.floor((this.dy + 32) / 32)};
-    this.occupiedCells = [upLeft, upRight, downLeft, downRight];
-
-    const possiblyUpRight = {x: Math.floor((this.dx + this.tankWidth) / 32), y: Math.floor(this.dy / 32)};
-    if (JSON.stringify(possiblyUpRight) !== JSON.stringify(upRight)) {
-      this.occupiedCells.push(possiblyUpRight);
-      this.occupiedCells.push({x: Math.floor((this.dx + this.tankWidth) / 32), y: Math.floor((this.dy + 32) / 32)});
-    }
-
-    const possiblyDownLeft = {x: Math.floor(this.dx / 32), y: Math.floor((this.dy + this.tankHeight) / 32)};
-    if (JSON.stringify(possiblyDownLeft) !== JSON.stringify(downLeft)) {
-      this.occupiedCells.push(possiblyDownLeft);
-      this.occupiedCells.push({x: Math.floor((this.dx + 32) / 32), y: Math.floor((this.dy + this.tankHeight) / 32)});
-    }
-
-    const possiblyDownRight = {x: Math.floor((this.dx + this.tankWidth) / 32), y: Math.floor((this.dy + this.tankHeight) / 32)};
-    if (JSON.stringify(possiblyDownRight) !== JSON.stringify(downRight)) {
-      this.occupiedCells.push(possiblyDownRight);
-      this.occupiedCells.push({x: Math.floor((this.dx + 32) / 32), y: Math.floor((this.dy + this.tankHeight) / 32)});
-    }
   }
 
   checkCollisions(direction: direction) {
@@ -202,7 +174,6 @@ export default class SampleTank {
     
     if (maybeObstacles.length) {
       if (maybeObstacles.some(obstacle => !obstacle.canPassThrough)) {
-        console.log('Uperlis');
         return false;
       }
       if (maybeObstacles.length > 1 && maybeObstacles.every(obstacle => obstacle.type === 'i')) {
@@ -227,7 +198,6 @@ export default class SampleTank {
         }
       }
     }
-    */
     return true;
   }
 
@@ -242,8 +212,6 @@ export default class SampleTank {
       this._isMoving = true;
       const collisionCheckResult = this.checkCollisions(direction);
       this.shiftCallback(direction, collisionCheckResult);
-
-      this.recalculateOccupiedCells();
 
       if (!collisionCheckResult) {
         this.blockedMoves[direction] = true;

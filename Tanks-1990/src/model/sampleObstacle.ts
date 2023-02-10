@@ -23,13 +23,11 @@ export class SampleObstacle {
   spriteY: number = 0
   _pingRendererTimeoutCallback: () => void
   timeoutID: number = 0
-  occupiedCell: Coords
 
   constructor(obstacleOptions: ObstacleOptions, renderer: Renderer) {
     this.renderer = renderer;
     this.x = obstacleOptions.x * 32;
     this.y = obstacleOptions.y * 32;
-    this.occupiedCell = {x: obstacleOptions.x, y: obstacleOptions.y}
     this.type = obstacleOptions.type;
     switch(this.type) {
       case 'b': // b - brick
@@ -71,8 +69,6 @@ export class SampleObstacle {
         isUnderLayer: this.isUnderLayer
       });
       this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
-      // if (this.isAlive) {
-      // }
     }
     this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
   }
