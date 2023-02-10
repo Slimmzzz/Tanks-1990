@@ -46,9 +46,9 @@ export default function main() {
   });
 
   const testTank = new SampleTank({
-    x: 832 - 64,
-    y: 0,
-    startDirection: 'left',
+    x: 263,
+    y: 832 - 57,
+    startDirection: 'up',
     isEnemy: false
   }, renderer);
   // const testTank1 = new SampleTank({
@@ -58,10 +58,10 @@ export default function main() {
   //   isEnemy: true
   // }, renderer);
   // const onKeyDownListener = onTankMoveKeyPressFactory(testTank);
-  // const onKeyUpListener = onTankMoveKeyUpFactory(testTank);
+  const onKeyUpListener = onTankMoveKeyUpFactory(testTank);
 
   // window.addEventListener('keydown', onKeyDownListener);
-  // window.addEventListener('keyup', onKeyUpListener);
+  window.addEventListener('keyup', onKeyUpListener);
 
   let keyboardController = new KeyController({
     'w': () => { testTank.move('up'); },

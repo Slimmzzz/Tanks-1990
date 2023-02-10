@@ -1,6 +1,6 @@
-export interface KeyCallbackMap {
-  [key: string]: () => void
-}
+// @ts-ignore
+import { KeyCallbackMap } from "../interfaces.ts";
+
 
 export class KeyController {
   timers: {[key: string | number]: number | null}

@@ -1,16 +1,10 @@
 // @ts-ignore
+import { ObstacleOptions, LevelMapEntity } from "../interfaces.ts";
+// @ts-ignore
 import Renderer from "./Renderer.ts";
 // @ts-ignore
 import { Coords } from "./sampleTank.ts";
 
-type LevelMapEntity = string[];
-
-interface ObstacleOptions {
-  id: number
-  x: number
-  y: number
-  type: string
-}
 
 export class SampleObstacle {
   renderer: Renderer
@@ -18,6 +12,7 @@ export class SampleObstacle {
   y: number
   width: number = 32
   height: number = 32
+  type: string
   isBreakable: boolean = false
   canPassThrough: boolean = false
   canShootThrough: boolean = false
@@ -33,7 +28,8 @@ export class SampleObstacle {
     this.x = obstacleOptions.x * 32;
     this.y = obstacleOptions.y * 32;
     this.occupiedCell = {x: obstacleOptions.x, y: obstacleOptions.y}
-    switch(obstacleOptions.type) {
+    this.type = obstacleOptions.type;
+    switch(this.type) {
       case 'b': // b - brick
         this.isBreakable = true;
         this.spriteX = 1052;
@@ -88,12 +84,14 @@ export class ObstacleCollection {
   _obstacles: {} = {}
   map: LevelMapEntity[]
   nextObstacleID: number = 1
+  realMap: (SampleObstacle | null)[][] = []
 
   constructor(renderer: Renderer, map?: LevelMapEntity[]) {
     this.renderer = renderer;
     this.map = map || [[]];
     if (this.map.length > 1 && this.map[0].length) {
       this.generateLevel();
+      this.renderer.obstacleCoordsMatrix = this.realMap;
     }
   }
 
@@ -112,14 +110,18 @@ export class ObstacleCollection {
       enumerable: true,
       configurable: true
     });
+    return obstacle;
   }
 
   generateLevel() {
     for (let i = 0; i < this.map.length; i++) {
+      this.realMap.push([]);
       const row = this.map[i];
       for (let j = 0; j < row.length; j++) {
         if (!!row[j]) {
-          this.create(j, i, row[j]);
+          this.realMap[i].push(this.create(j, i, row[j]))
+        } else {
+          this.realMap[i].push(null);
         }
       }
     }
