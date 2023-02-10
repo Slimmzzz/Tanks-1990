@@ -63,11 +63,17 @@ export default function main() {
   // window.addEventListener('keydown', onKeyDownListener);
   window.addEventListener('keyup', onKeyUpListener);
 
+  const _move = (direction: direction) => {
+    if (!testTank.ignoreKeyboard) {
+      testTank.move(direction)
+    }
+  }
+
   let keyboardController = new KeyController({
-    'w': () => { testTank.move('up'); },
-    's': () => { testTank.move('down'); },
-    'a': () => { testTank.move('left'); },
-    'd': () => { testTank.move('right'); }
+    'w': () => { _move('up'); },
+    's': () => { _move('down'); },
+    'a': () => { _move('left'); },
+    'd': () => { _move('right'); }
   }, 16);
 
   // Create test obstacles
