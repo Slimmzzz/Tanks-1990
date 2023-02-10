@@ -27,6 +27,8 @@ export default class SampleTank {
   occupiedCells: Coords[]
   isOnIce: boolean = false
   direction: direction
+  ignoreKeyboard: boolean = false
+  ignoreIce: boolean = false
   blockedMoves: TankBlockedMoves = {
     left: false,
     right: false,
@@ -202,30 +204,28 @@ export default class SampleTank {
       if (maybeObstacles.some(obstacle => !obstacle.canPassThrough)) {
         console.log('Uperlis');
         return false;
-      }       
-    }
+      }
+      if (maybeObstacles.length > 1 && maybeObstacles.every(obstacle => obstacle.type === 'i')) {
+        if (!this.ignoreIce) {
+          this.ignoreKeyboard = true;
+          this.ignoreIce = true;
 
-    /*
-    let intersectingCell;
-    for (const coords of this.occupiedCells) {
-      for (const obstacle of this.renderer.obstacles) {
-        if (JSON.stringify(coords) === JSON.stringify(obstacle.occupiedCell)) {
-          // Проверка на возможность проехать через препятствие(кусты, лед)
-          if (!obstacle.canPassThrough) {
-            intersectingCell = obstacle;
-            break;
+          let i = 32;
+          let iceTimeout: number | undefined;
+          let iceTimeoutCallback = () => {
+            this.move(direction);
+            if (i) {
+              iceTimeout = setTimeout(iceTimeoutCallback, 16);
+              i--;
+            } else {
+              clearTimeout(iceTimeout);
+              this.ignoreKeyboard = false;
+              this.ignoreIce = false;
+            }
           }
-          if (obstacle.type === 'i') {
-            this.isOnIce = true;
-          }
+          iceTimeout = setTimeout(iceTimeoutCallback, 16);
         }
       }
-      if (!!intersectingCell) {
-        break;
-      }
-    }
-    if (!!intersectingCell) {
-      return false;
     }
     */
     return true;
