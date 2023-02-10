@@ -74,6 +74,21 @@ export class SampleObstacle {
     this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
   }
   
+  initWaterAnimation() {
+    let i = 1;
+    const animationTimeoutCallback = () => {
+      this.spriteX = spriteMap.obstacles.w[`w${i}`].x;
+      this.spriteY = spriteMap.obstacles.w[`w${i}`].y;
+      if (i === 2) {
+        i = 1;
+      } else {
+        i++;
+      }
+      setTimeout(animationTimeoutCallback, 640);
+    }
+    setTimeout(animationTimeoutCallback, 640);
+  };
+
   collisionBullet() {};
 
   collisionMove() {};
