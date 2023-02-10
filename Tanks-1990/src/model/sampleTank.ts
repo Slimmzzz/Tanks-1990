@@ -4,6 +4,8 @@ import { Coords, direction, TankBlockedMoves, TankOptions } from "../interfaces.
 import Renderer from "./Renderer.ts";
 // @ts-ignore
 import { SampleObstacle } from "./sampleObstacle.ts";
+// @ts-ignore
+import { spriteMap } from "../view/sprite.ts";
 
 
 export default class SampleTank {
@@ -22,9 +24,10 @@ export default class SampleTank {
   moveTimeoutID: number = 0
   isEnemy: boolean
   enemyMoveDirection: string | undefined
-  occupiedCells: Coords[]
   isOnIce: boolean = false
   direction: direction
+  ignoreKeyboard: boolean = false
+  ignoreIce: boolean = false
   blockedMoves: TankBlockedMoves = {
     left: false,
     right: false,
@@ -32,24 +35,30 @@ export default class SampleTank {
     down: false
   }
   _pingRendererTimeoutCallback: () => void
+  tankModel: {
+    up1: Coords
+    up2: Coords
+    left1: Coords
+    left2: Coords
+    down1: Coords
+    down2: Coords
+    right1: Coords
+    right2: Coords
+  }
+
 
   constructor(tankOptions: TankOptions, renderer: Renderer) {
     this.renderer = renderer;
     this.dx = tankOptions.x;
     this.dy = tankOptions.y;
     this.isEnemy = tankOptions.isEnemy;
-    this.occupiedCells = [
-      {x: Math.floor(tankOptions.x), y: Math.floor(tankOptions.y)},
-      {x: Math.floor(tankOptions.x + 32), y: Math.floor(tankOptions.y)},
-      {x: Math.floor(tankOptions.x), y: Math.floor(tankOptions.y + 32)},
-      {x: Math.floor(tankOptions.x + 32), y: Math.floor(tankOptions.y + 32)},
-    ];
+    this.tankModel = spriteMap.tanks[tankOptions.tankType || 'player'][tankOptions.tankColor || 'yellow'];
     this.direction = tankOptions.startDirection as direction;
     switch (this.direction) {
-      case 'up': this.spriteX = 4; this.spriteY = 8; break;
-      case 'down': this.spriteY = 4; this.spriteX = (64 * 4) + 8; break;
-      case 'right': this.spriteY = 4; this.spriteX = (64 * 6) + 8; break;
-      case 'left': this.spriteY = 4; this.spriteX = (64 * 2) + 8; break;
+      case 'up': this.spriteX = this.tankModel.up1.x; this.spriteY = this.tankModel.up1.y; break;
+      case 'down': this.spriteY = this.tankModel.down1.y; this.spriteX = this.tankModel.down1.x; break;
+      case 'right': this.spriteY = this.tankModel.right1.y; this.spriteX = this.tankModel.right1.x; break;
+      case 'left': this.spriteY = this.tankModel.left1.y; this.spriteX = this.tankModel.left1.x; break;
     };
     this._pingRendererTimeoutCallback = () => {
       this.renderer.add({
@@ -83,33 +92,6 @@ export default class SampleTank {
 
   set isMoving(isMoveKeyPressed: boolean) {
     this._isMoving = isMoveKeyPressed;
-  }
-
-  recalculateOccupiedCells() {
-    this.occupiedCells = [];
-    const upLeft = {x: Math.floor(this.dx / 32), y: Math.floor(this.dy / 32)};
-    const upRight = {x: Math.floor((this.dx + 32) / 32), y: Math.floor(this.dy / 32)};
-    const downLeft = {x: Math.floor(this.dx / 32), y: Math.floor((this.dy + 32) / 32)};
-    const downRight = {x: Math.floor((this.dx + 32) / 32), y: Math.floor((this.dy + 32) / 32)};
-    this.occupiedCells = [upLeft, upRight, downLeft, downRight];
-
-    const possiblyUpRight = {x: Math.floor((this.dx + this.tankWidth) / 32), y: Math.floor(this.dy / 32)};
-    if (JSON.stringify(possiblyUpRight) !== JSON.stringify(upRight)) {
-      this.occupiedCells.push(possiblyUpRight);
-      this.occupiedCells.push({x: Math.floor((this.dx + this.tankWidth) / 32), y: Math.floor((this.dy + 32) / 32)});
-    }
-
-    const possiblyDownLeft = {x: Math.floor(this.dx / 32), y: Math.floor((this.dy + this.tankHeight) / 32)};
-    if (JSON.stringify(possiblyDownLeft) !== JSON.stringify(downLeft)) {
-      this.occupiedCells.push(possiblyDownLeft);
-      this.occupiedCells.push({x: Math.floor((this.dx + 32) / 32), y: Math.floor((this.dy + this.tankHeight) / 32)});
-    }
-
-    const possiblyDownRight = {x: Math.floor((this.dx + this.tankWidth) / 32), y: Math.floor((this.dy + this.tankHeight) / 32)};
-    if (JSON.stringify(possiblyDownRight) !== JSON.stringify(downRight)) {
-      this.occupiedCells.push(possiblyDownRight);
-      this.occupiedCells.push({x: Math.floor((this.dx + 32) / 32), y: Math.floor((this.dy + this.tankHeight) / 32)});
-    }
   }
 
   checkCollisions(direction: direction) {
@@ -192,34 +174,30 @@ export default class SampleTank {
     
     if (maybeObstacles.length) {
       if (maybeObstacles.some(obstacle => !obstacle.canPassThrough)) {
-        console.log('Uperlis');
         return false;
-      }       
-    }
+      }
+      if (maybeObstacles.length > 1 && maybeObstacles.every(obstacle => obstacle.type === 'i')) {
+        if (!this.ignoreIce) {
+          this.ignoreKeyboard = true;
+          this.ignoreIce = true;
 
-    /*
-    let intersectingCell;
-    for (const coords of this.occupiedCells) {
-      for (const obstacle of this.renderer.obstacles) {
-        if (JSON.stringify(coords) === JSON.stringify(obstacle.occupiedCell)) {
-          // Проверка на возможность проехать через препятствие(кусты, лед)
-          if (!obstacle.canPassThrough) {
-            intersectingCell = obstacle;
-            break;
+          let i = 32;
+          let iceTimeout: number | undefined;
+          let iceTimeoutCallback = () => {
+            this.move(direction);
+            if (i) {
+              iceTimeout = setTimeout(iceTimeoutCallback, 16);
+              i--;
+            } else {
+              clearTimeout(iceTimeout);
+              this.ignoreKeyboard = false;
+              this.ignoreIce = false;
+            }
           }
-          if (obstacle.type === 'i') {
-            this.isOnIce = true;
-          }
+          iceTimeout = setTimeout(iceTimeoutCallback, 16);
         }
       }
-      if (!!intersectingCell) {
-        break;
-      }
     }
-    if (!!intersectingCell) {
-      return false;
-    }
-    */
     return true;
   }
 
@@ -235,8 +213,6 @@ export default class SampleTank {
       const collisionCheckResult = this.checkCollisions(direction);
       this.shiftCallback(direction, collisionCheckResult);
 
-      this.recalculateOccupiedCells();
-
       if (!collisionCheckResult) {
         this.blockedMoves[direction] = true;
         this._isMoving = false;
@@ -250,23 +226,23 @@ export default class SampleTank {
     switch (direction) {
       case 'right':
         collisionCheckResult ? this.dx += 1 : this.dx -= 1;
-        this.spriteX = this.spriteX === (64 * 6) + 8 ? (64 * 7) + 12 : (64 * 6) + 8;
-        this.spriteY = 4;
+        this.spriteX = this.spriteX === this.tankModel.right1.x ? this.tankModel.right2.x : this.tankModel.right1.x;
+        this.spriteY = this.tankModel.right1.y;
         break;
       case 'left':
         collisionCheckResult ? this.dx -= 1 : this.dx += 1;
-        this.spriteX = this.spriteX === (64 * 2) + 8 ? (64 * 3) + 12 : (64 * 2) + 8;
-        this.spriteY = 4;
+        this.spriteX = this.spriteX === this.tankModel.left1.x ? this.tankModel.left2.x : this.tankModel.left1.x;
+        this.spriteY = this.tankModel.left1.y;
         break;
       case 'up':
         collisionCheckResult ? this.dy -= 1 : this.dy += 1;
-        this.spriteX = this.spriteX === 4 ? 68 : 4;
-        this.spriteY = 8;
+        this.spriteX = this.spriteX === this.tankModel.up1.x ? this.tankModel.up2.x : this.tankModel.up1.x;
+        this.spriteY = this.tankModel.up1.y;
         break;
       case 'down':
         collisionCheckResult ? this.dy += 1 : this.dy -= 1;
-        this.spriteX = this.spriteX === (64 * 4) + 8 ? (64 * 5) + 8 : (64 * 4) + 8;
-        this.spriteY = 4;
+        this.spriteX = this.spriteX === this.tankModel.down1.x ? this.tankModel.down2.x : this.tankModel.down1.x;
+        this.spriteY = this.tankModel.down1.y;
         break;
     }
   }
