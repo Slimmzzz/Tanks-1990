@@ -28,6 +28,8 @@ export interface TankOptions {
   y: number
   startDirection: string
   isEnemy: boolean
+  tankType?: string
+  tankColor?: string
 };
 
 export interface TankBlockedMoves {

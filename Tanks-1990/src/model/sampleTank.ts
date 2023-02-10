@@ -38,12 +38,7 @@ export default class SampleTank {
     this.dx = tankOptions.x;
     this.dy = tankOptions.y;
     this.isEnemy = tankOptions.isEnemy;
-    this.occupiedCells = [
-      {x: Math.floor(tankOptions.x), y: Math.floor(tankOptions.y)},
-      {x: Math.floor(tankOptions.x + 32), y: Math.floor(tankOptions.y)},
-      {x: Math.floor(tankOptions.x), y: Math.floor(tankOptions.y + 32)},
-      {x: Math.floor(tankOptions.x + 32), y: Math.floor(tankOptions.y + 32)},
-    ];
+    this.tankModel = spriteMap.tanks[tankOptions.tankType || 'player'][tankOptions.tankColor || 'yellow'];
     this.direction = tankOptions.startDirection as direction;
     switch (this.direction) {
       case 'up': this.spriteX = 4; this.spriteY = 8; break;
