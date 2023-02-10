@@ -6,6 +6,8 @@ import Renderer from "./Renderer.ts";
 import { SampleObstacle } from "./sampleObstacle.ts";
 // @ts-ignore
 import { spriteMap } from "../view/sprite.ts";
+// @ts-ignore
+import { KeyController } from "../controller/KeyController.ts";
 
 
 export default class SampleTank {
@@ -28,6 +30,7 @@ export default class SampleTank {
   direction: direction
   ignoreKeyboard: boolean = false
   ignoreIce: boolean = false
+  keyboardController: KeyController | null = null
   blockedMoves: TankBlockedMoves = {
     left: false,
     right: false,
@@ -76,9 +79,11 @@ export default class SampleTank {
       }
     };
     this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
-    // if (this.isEnemy) {
-    //   this.initEnemyBehavior();
-    // }
+    if (this.isEnemy) {
+      // this.initEnemyBehavior();
+    } else {
+      this.initKeyController();
+    }
     Object.defineProperty(window, '_tank', {
       value: this,
       enumerable: true,
@@ -253,4 +258,27 @@ export default class SampleTank {
     }
   }
 
+  shoot() {
+    // TODO: implement shooting logic
+    // Here is a perfect place to create bullet instances
+  }
+
+  private initKeyController() {
+    const _move = (direction: direction) => {
+      if (!this.ignoreKeyboard) {
+        this.move(direction)
+      }
+    }
+  
+    this.keyboardController = new KeyController({
+      'w': () => { _move('up'); },
+      's': () => { _move('down'); },
+      'a': () => { _move('left'); },
+      'd': () => { _move('right'); },
+    }, 16);  
+
+    let shootController = new KeyController({
+      ' ': () => { this.shoot(); }
+    });
+  }
 }
