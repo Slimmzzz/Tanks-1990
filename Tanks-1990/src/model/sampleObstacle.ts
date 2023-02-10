@@ -1,16 +1,10 @@
 // @ts-ignore
+import { ObstacleOptions, LevelMapEntity } from "../interfaces.ts";
+// @ts-ignore
 import Renderer from "./Renderer.ts";
 // @ts-ignore
 import { Coords } from "./sampleTank.ts";
 
-type LevelMapEntity = string[];
-
-interface ObstacleOptions {
-  id: number
-  x: number
-  y: number
-  type: string
-}
 
 export class SampleObstacle {
   renderer: Renderer

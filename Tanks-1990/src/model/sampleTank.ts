@@ -1,26 +1,10 @@
 // @ts-ignore
+import { Coords, direction, TankBlockedMoves, TankOptions } from "../interfaces.ts";
+// @ts-ignore
 import Renderer from "./Renderer.ts";
+// @ts-ignore
+import { SampleObstacle } from "./sampleObstacle.ts";
 
-interface TankOptions {
-  x: number
-  y: number
-  startDirection: string
-  isEnemy: boolean
-}
-
-interface TankBlockedMoves {
-  left: boolean
-  right: boolean
-  up: boolean
-  down: boolean
-}
-
-export interface Coords {
-  x: number
-  y: number
-}
-
-type direction = 'left' | 'right' | 'up' | 'down';
 
 export default class SampleTank {
   dx: number
