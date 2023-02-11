@@ -1,6 +1,6 @@
-export interface KeyCallbackMap {
-  [key: string]: () => void
-}
+// @ts-ignore
+import { KeyCallbackMap } from "../interfaces.ts";
+
 
 export class KeyController {
   timers: {[key: string | number]: number | null}
@@ -12,7 +12,7 @@ export class KeyController {
     this.timers = {};
     this.keys = keyCallbackMap;
     this.repeat = repeat;
-    document.onkeydown = ({ key }) => {
+    document.addEventListener('keydown', ({ key }) => {
       if (!(key in this.keys)) {
         return true;
       }
@@ -35,15 +35,15 @@ export class KeyController {
         }
       }
       return false;
-    }
-    document.onkeyup = ({ key }) => {
+    });
+    document.addEventListener('keyup', ({ key }) => {
       if (key in this.timers) {
         if (this.timers[key] !== null) {
           clearInterval(this.timers[key]!);
         }
         delete this.timers[key]
       }
-    }
+    });
     window.onblur = () => {
       for (const key in this.timers) {
         if (this.timers[key] !== null) {

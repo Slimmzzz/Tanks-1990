@@ -1,5 +1,5 @@
 import Renderer from './Renderer'
-import { Coords } from './sampleTank'
+
 
 interface BullerOptions {
   x: number

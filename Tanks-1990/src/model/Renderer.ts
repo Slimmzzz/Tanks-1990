@@ -1,19 +1,10 @@
 // @ts-ignore
+import { DrawOptions } from "../interfaces.ts"
+// @ts-ignore
 import sprite from "../view/sprite.ts"
 // @ts-ignore
 import { SampleObstacle } from "./sampleObstacle.ts"
 
-interface DrawOptions {
-  spriteX: number
-  spriteY: number
-  spriteWidth: number
-  spriteHeight: number
-  canvasX: number
-  canvasY: number
-  canvasWidth?: number
-  canvasHeight?: number
-  isUnderLayer?: boolean
-}
 
 export default class Renderer {
   canvas: HTMLCanvasElement

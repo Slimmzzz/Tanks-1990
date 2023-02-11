@@ -1,17 +1,12 @@
 // @ts-ignore
-import { Bullet } from "./Bullet";
-import Renderer from "./Renderer";
+import { ObstacleOptions, LevelMapEntity } from "../interfaces.ts";
+// @ts-ignore
+import { spriteMap } from "../view/sprite.ts";
+// @ts-ignore
+import Renderer from "./Renderer.ts";
 // @ts-ignore
 import { Coords } from "./sampleTank.ts";
 
-type LevelMapEntity = string[];
-
-interface ObstacleOptions {
-  id: number
-  x: number
-  y: number
-  type: string
-}
 
 export class SampleObstacle {
   renderer: Renderer
@@ -19,6 +14,7 @@ export class SampleObstacle {
   y: number
   width: number = 32
   height: number = 32
+  type: string
   isBreakable: boolean = false
   canPassThrough: boolean = false
   canShootThrough: boolean = false
@@ -27,40 +23,40 @@ export class SampleObstacle {
   spriteY: number = 0
   _pingRendererTimeoutCallback: () => void
   timeoutID: number = 0
-  occupiedCell: Coords
 
   constructor(obstacleOptions: ObstacleOptions, renderer: Renderer) {
     this.renderer = renderer;
     this.x = obstacleOptions.x * 32;
     this.y = obstacleOptions.y * 32;
-    this.occupiedCell = {x: obstacleOptions.x, y: obstacleOptions.y}
-    switch(obstacleOptions.type) {
+    this.type = obstacleOptions.type;
+    switch(this.type) {
       case 'b': // b - brick
         this.isBreakable = true;
-        this.spriteX = 1052;
-        this.spriteY = 256;
+        this.spriteX = spriteMap.obstacles.b.x;
+        this.spriteY = spriteMap.obstacles.b.y;
         break;
       case 'a': // a - armored wall
-        this.spriteX = 1052;
-        this.spriteY = 288;
+        this.spriteX = spriteMap.obstacles.a.x;
+        this.spriteY = spriteMap.obstacles.a.y;
         break;
       case 'f': // f - forest/ kusty
-        this.spriteX = 1084;
-        this.spriteY = 288;
+        this.spriteX = spriteMap.obstacles.f.x;
+        this.spriteY = spriteMap.obstacles.f.y;
         this.canPassThrough = true;
         this.canShootThrough = true;
         break;
       case 'i': // i - ice
-        this.spriteX = 1116;
-        this.spriteY = 288;
+        this.spriteX = spriteMap.obstacles.i.x;
+        this.spriteY = spriteMap.obstacles.i.y;
         this.canPassThrough = true;
         this.canShootThrough = true;
         this.isUnderLayer = true;
         break;
       case 'w': // w - water
-        this.spriteX = 1052;
-        this.spriteY = 320;
+        this.spriteX = spriteMap.obstacles.w.w1.x;
+        this.spriteY = spriteMap.obstacles.w.w1.y;
         this.canShootThrough = true;
+        this.initWaterAnimation();
     }
     this._pingRendererTimeoutCallback = () => {
       this.renderer.add({
@@ -73,12 +69,25 @@ export class SampleObstacle {
         isUnderLayer: this.isUnderLayer
       });
       this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
-      // if (this.isAlive) {
-      // }
     }
     this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
   }
   
+  initWaterAnimation() {
+    let i = 1;
+    const animationTimeoutCallback = () => {
+      this.spriteX = spriteMap.obstacles.w[`w${i}`].x;
+      this.spriteY = spriteMap.obstacles.w[`w${i}`].y;
+      if (i === 2) {
+        i = 1;
+      } else {
+        i++;
+      }
+      setTimeout(animationTimeoutCallback, 640);
+    }
+    setTimeout(animationTimeoutCallback, 640);
+  };
+
   collisionBullet() {};
 
   collisionMove() {};
@@ -89,12 +98,14 @@ export class ObstacleCollection {
   _obstacles: {} = {}
   map: LevelMapEntity[]
   nextObstacleID: number = 1
+  realMap: (SampleObstacle | null)[][] = []
 
   constructor(renderer: Renderer, map?: LevelMapEntity[]) {
     this.renderer = renderer;
     this.map = map || [[]];
     if (this.map.length > 1 && this.map[0].length) {
       this.generateLevel();
+      this.renderer.obstacleCoordsMatrix = this.realMap;
     }
   }
 
@@ -113,17 +124,20 @@ export class ObstacleCollection {
       enumerable: true,
       configurable: true
     });
+    return obstacle;
   }
 
   generateLevel() {
     for (let i = 0; i < this.map.length; i++) {
+      this.realMap.push([]);
       const row = this.map[i];
       for (let j = 0; j < row.length; j++) {
         if (!!row[j]) {
-          this.create(j, i, row[j]);
+          this.realMap[i].push(this.create(j, i, row[j]))
+        } else {
+          this.realMap[i].push(null);
         }
       }
     }
   }
 }
-
