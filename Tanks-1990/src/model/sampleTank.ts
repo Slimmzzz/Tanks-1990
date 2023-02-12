@@ -10,9 +10,12 @@ import { spriteMap } from "../view/sprite.ts";
 import { KeyController } from "../controller/KeyController.ts";
 // @ts-ignore
 import { Bullet } from "./Bullet.ts";
+// @ts-ignore
+import enemyBehaviour from './ai.ts';
 
 
 export default class SampleTank {
+  id: number
   dx: number
   dy: number
   tankWidth: number = 50
@@ -54,8 +57,11 @@ export default class SampleTank {
 
   constructor(tankOptions: TankOptions, renderer: Renderer) {
     this.renderer = renderer;
+    this.id = tankOptions.id;
     this.dx = tankOptions.x;
     this.dy = tankOptions.y;
+    this.spriteWidth = tankOptions.tankModelWidth || 52;
+    this.spriteHeight = tankOptions.tankModelHeight || 52;
     this.isEnemy = tankOptions.isEnemy;
     this.tankModel = spriteMap.tanks[tankOptions.tankType || 'player'][tankOptions.tankColor || 'yellow'];
     this.direction = tankOptions.startDirection as direction;
@@ -82,15 +88,23 @@ export default class SampleTank {
     };
     this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
     if (this.isEnemy) {
-      // this.initEnemyBehavior();
+      if (!tankOptions.ignoreAIBehaviour) {
+        this.initEnemyBehavior();
+      }
     } else {
+      Object.defineProperty(window, '_tank', {
+        value: this,
+        enumerable: true,
+        configurable: true
+      })
       this.initKeyController();
     }
-    Object.defineProperty(window, '_tank', {
-      value: this,
-      enumerable: true,
-      configurable: true
-    })
+
+    this.renderer.tanks.push(this);
+  }
+
+  initEnemyBehavior() {
+    enemyBehaviour(this);
   }
 
   get isMoving() {
@@ -279,7 +293,7 @@ export default class SampleTank {
     }, 16);  
 
     let shootController = new KeyController({
-      ' ': () => { this.shoot()}
+      ' ': () => { this.shoot(); }
     });
   }
 }
