@@ -8,6 +8,8 @@ import { SampleObstacle } from "./sampleObstacle.ts";
 import { spriteMap } from "../view/sprite.ts";
 // @ts-ignore
 import { KeyController } from "../controller/KeyController.ts";
+// @ts-ignore
+import { Bullet } from "./Bullet.ts";
 
 
 export default class SampleTank {
@@ -259,8 +261,7 @@ export default class SampleTank {
   }
 
   shoot() {
-    // TODO: implement shooting logic
-    // Here is a perfect place to create bullet instances
+    return new Bullet({x: this.dx, y: this.dy}, this.renderer).move(this.direction)
   }
 
   private initKeyController() {
@@ -278,7 +279,7 @@ export default class SampleTank {
     }, 16);  
 
     let shootController = new KeyController({
-      ' ': () => { this.shoot(); }
+      ' ': () => { this.shoot()}
     });
   }
 }

@@ -75,3 +75,27 @@ export default function main() {
     configurable: true,
   });
 }
+
+//   let shoot: string = testTank.startDirection
+//   function getshootDirection(direction: string) {
+//     if (shoot == 'up') {
+//       return { x: testTank.dx + 20, y: testTank.dy - 35 }
+//     }
+//     if (shoot == 'down') {
+//       return { x: testTank.dx + 25, y: testTank.dy + 25 }
+//     }
+//     if (shoot == 'left') {
+//       return { x: testTank.dx, y: testTank.dy - 10 }
+//     }
+//     if (shoot == 'right') {
+//       return { x: testTank.dx + 50, y: testTank.dy - 10 }
+//     }
+//   }
+
+//   console.log(testTank)
+//   window.addEventListener('keydown', (e) => {
+//     if (e.code == 'Space') {
+//       const bullet = new Bullet(getshootDirection(shoot), renderer).move(shoot)
+//     }
+//   })
+// }

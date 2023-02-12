@@ -16,6 +16,7 @@ export default class Renderer {
   
   constructor(root: HTMLDivElement) {
     this.canvas = root.appendChild(document.createElement('canvas'));
+    this.canvas.classList.add('canvas')
     this.canvas.width = this.canvas.height = 832;
     this.canvas.style.border = '1px solid #000';
     this.canvas.style.background = "#000";
