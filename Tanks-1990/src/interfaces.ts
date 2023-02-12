@@ -24,12 +24,16 @@ export interface ObstacleOptions {
 };
 
 export interface TankOptions {
+  id: number
   x: number
   y: number
   startDirection: string
   isEnemy: boolean
   tankType?: string
   tankColor?: string
+  tankModelWidth?: number
+  tankModelHeight?: number
+  ignoreAIBehaviour?: boolean
 };
 
 export interface TankBlockedMoves {
