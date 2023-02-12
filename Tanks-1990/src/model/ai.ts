@@ -1,9 +1,9 @@
 // @ts-ignore
-import SampleTank from './sampleTank.ts';
+import Tank from './sampleTank.ts';
 // @ts-ignore
 import { direction } from '../interfaces.ts';
 
-function changeDirection(tank: SampleTank) {
+function changeDirection(tank: Tank) {
   let directions: direction[] = ['left', 'right', 'up', 'down'];
   directions.splice(directions.findIndex(d => d === tank.direction), 1);
 
@@ -37,7 +37,7 @@ function changeDirection(tank: SampleTank) {
   return directions[Math.floor(Math.random() * directions.length)];
 }
 
-export default function enemyBehaviour(tank: SampleTank) {
+export default function enemyBehaviour(tank: Tank) {
   const moveCallback = () => {
     let canMove = tank.checkCollisions(tank.direction);
     if (!canMove) {

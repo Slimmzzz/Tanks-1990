@@ -3,7 +3,7 @@ import { Coords, direction, TankBlockedMoves, TankOptions } from "../interfaces.
 // @ts-ignore
 import Renderer from "./Renderer.ts";
 // @ts-ignore
-import { SampleObstacle } from "./sampleObstacle.ts";
+import { Obstacle } from "./sampleObstacle.ts";
 // @ts-ignore
 import { spriteMap } from "../view/sprite.ts";
 // @ts-ignore
@@ -14,7 +14,7 @@ import { Bullet } from "./Bullet.ts";
 import enemyBehaviour from './ai.ts';
 
 
-export default class SampleTank {
+export default class Tank {
   id: number
   dx: number
   dy: number
@@ -132,14 +132,14 @@ export default class SampleTank {
       const LookupXLeft = Math.floor((this.dx) / 32);
       const LookupXRight = Math.floor((this.dx + this.tankWidth) / 32);
       
-      if (matrix[LookupY][LookupXLeft] instanceof SampleObstacle) {
+      if (matrix[LookupY][LookupXLeft] instanceof Obstacle) {
         maybeObstacles.push(matrix[LookupY][LookupXLeft]);
       }
-      if (matrix[LookupY][LookupXRight] instanceof SampleObstacle) {
+      if (matrix[LookupY][LookupXRight] instanceof Obstacle) {
         maybeObstacles.push(matrix[LookupY][LookupXRight]);
       }
       if (LookupXRight - LookupXLeft > 1) {
-        if (matrix[LookupY][LookupXLeft + 1] instanceof SampleObstacle) {
+        if (matrix[LookupY][LookupXLeft + 1] instanceof Obstacle) {
           maybeObstacles.push(matrix[LookupY][LookupXLeft + 1]);
         }
       }
@@ -148,14 +148,14 @@ export default class SampleTank {
       const LookupXLeft = Math.floor((this.dx) / 32);
       const LookupXRight = Math.floor((this.dx + this.tankWidth) / 32);
 
-      if (matrix[LookupY][LookupXLeft] instanceof SampleObstacle) {
+      if (matrix[LookupY][LookupXLeft] instanceof Obstacle) {
         maybeObstacles.push(matrix[LookupY][LookupXLeft]);
       }
-      if (matrix[LookupY][LookupXRight] instanceof SampleObstacle) {
+      if (matrix[LookupY][LookupXRight] instanceof Obstacle) {
         maybeObstacles.push(matrix[LookupY][LookupXRight]);
       }
       if (LookupXRight - LookupXLeft > 1) {
-        if (matrix[LookupY][LookupXLeft + 1] instanceof SampleObstacle) {
+        if (matrix[LookupY][LookupXLeft + 1] instanceof Obstacle) {
           maybeObstacles.push(matrix[LookupY][LookupXLeft + 1]);
         }
       }
@@ -164,14 +164,14 @@ export default class SampleTank {
       const lookupYUp = Math.floor(this.dy / 32);
       const lookupYDown = Math.floor((this.dy + this.tankHeight) / 32);
 
-      if (matrix[lookupYUp][lookupX] instanceof SampleObstacle) {
+      if (matrix[lookupYUp][lookupX] instanceof Obstacle) {
         maybeObstacles.push(matrix[lookupYUp][lookupX]);
       }
-      if (matrix[lookupYDown][lookupX] instanceof SampleObstacle) {
+      if (matrix[lookupYDown][lookupX] instanceof Obstacle) {
         maybeObstacles.push(matrix[lookupYDown][lookupX]);
       }
       if (lookupYDown - lookupYUp > 1) {
-        if (matrix[lookupYUp + 1][lookupX] instanceof SampleObstacle) {
+        if (matrix[lookupYUp + 1][lookupX] instanceof Obstacle) {
           maybeObstacles.push(matrix[lookupYUp + 1][lookupX]);
         }
       }
@@ -180,14 +180,14 @@ export default class SampleTank {
       const lookupYUp = Math.floor(this.dy / 32);
       const lookupYDown = Math.floor((this.dy + this.tankHeight) / 32);
 
-      if (matrix[lookupYUp][lookupX] instanceof SampleObstacle) {
+      if (matrix[lookupYUp][lookupX] instanceof Obstacle) {
         maybeObstacles.push(matrix[lookupYUp][lookupX]);
       }
-      if (matrix[lookupYDown][lookupX] instanceof SampleObstacle) {
+      if (matrix[lookupYDown][lookupX] instanceof Obstacle) {
         maybeObstacles.push(matrix[lookupYDown][lookupX]);
       }
       if (lookupYDown - lookupYUp > 1) {
-        if (matrix[lookupYUp + 1][lookupX] instanceof SampleObstacle) {
+        if (matrix[lookupYUp + 1][lookupX] instanceof Obstacle) {
           maybeObstacles.push(matrix[lookupYUp + 1][lookupX]);
         }
       }
@@ -292,8 +292,8 @@ export default class SampleTank {
       'd': () => { _move('right'); },
     }, 16);  
 
-    let shootController = new KeyController({
-      ' ': () => { this.shoot(); }
-    });
+    // let shootController = new KeyController({
+    //   ' ': () => { this.shoot(); }
+    // });
   }
 }

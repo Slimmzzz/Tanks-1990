@@ -3,7 +3,7 @@ import Renderer from "../model/Renderer.ts";
 // @ts-ignore
 import { ObstacleCollection } from "../model/sampleObstacle.ts";
 // @ts-ignore
-import SampleTank from "../model/sampleTank.ts";
+import Tank from "../model/sampleTank.ts";
 // @ts-ignore
 import levels from "../view/levels.ts";
 
@@ -49,14 +49,14 @@ export default function main() {
     configurable: true,
   });
 
-  const testTank = new SampleTank({
+  const testTank = new Tank({
     id: 1,
     x: 263,
     y: 832 - 57,
     startDirection: 'up',
     isEnemy: false
   }, renderer);
-  const testTank1 = new SampleTank({
+  const testTank1 = new Tank({
     id: 2,
     x: 2,
     y: 2,
@@ -68,7 +68,7 @@ export default function main() {
     tankModelHeight: spriteMap.tanks.enemy1.height,
     // ignoreAIBehaviour: true,
   }, renderer);
-  const testTank2 = new SampleTank({
+  const testTank2 = new Tank({
     id: 3,
     x: 832 - 60,
     y: 2,
@@ -79,7 +79,7 @@ export default function main() {
     tankModelWidth: spriteMap.tanks.enemy1.width,
     tankModelHeight: spriteMap.tanks.enemy1.height
   }, renderer);
-  const testTank3 = new SampleTank({
+  const testTank3 = new Tank({
     id: 4,
     x: (832 - 60) / 2,
     y: 2,

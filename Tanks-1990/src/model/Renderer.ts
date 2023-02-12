@@ -3,9 +3,9 @@ import { DrawOptions } from "../interfaces.ts"
 // @ts-ignore
 import sprite from "../view/sprite.ts"
 // @ts-ignore
-import { SampleObstacle } from "./sampleObstacle.ts"
+import { Obstacle } from "./sampleObstacle.ts"
 // @ts-ignore
-import SampleTank from './sampleTank.ts';
+import Tank from './sampleTank.ts';
 
 
 export default class Renderer {
@@ -14,8 +14,8 @@ export default class Renderer {
   drawStack: DrawOptions[] = []
   tiomeoutID: number | undefined
   isActive: boolean = false
-  obstacles: SampleObstacle[] = []
-  tanks: SampleTank[] = []
+  obstacles: Obstacle[] = []
+  tanks: Tank[] = []
   
   constructor(root: HTMLDivElement) {
     this.canvas = root.appendChild(document.createElement('canvas'));
@@ -59,7 +59,7 @@ export default class Renderer {
     }
   }
 
-  addObstacle(obstacle: SampleObstacle) {
+  addObstacle(obstacle: Obstacle) {
     this.obstacles.push(obstacle);
   }
 
