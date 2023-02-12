@@ -1,7 +1,9 @@
-import Renderer from './Renderer'
+// @ts-ignore
+import sprite, { spriteMap } from '../view/sprite.ts'
+// @ts-ignore
+import Renderer from './Renderer.ts'
 
-
-interface BullerOptions {
+interface BulletOptions {
   x: number
   y: number
 }
@@ -18,11 +20,11 @@ export class Bullet {
   bulletHeight: number = 55
   timeoutID: number = 0
   isAlive: boolean = true
-  speed: number = 5
+  speed: number = 2.5
 
   _pingRendererTimeoutCallback: () => void
 
-  constructor(bulletOptions: BullerOptions, renderer: Renderer) {
+  constructor(bulletOptions: BulletOptions, renderer: Renderer) {
     this.renderer = renderer
     this.dx = bulletOptions.x
     this.dy = bulletOptions.y
@@ -45,12 +47,40 @@ export class Bullet {
     this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16)
   }
 
+  getShootDirection(direction: string) {
+    if (direction == 'up') {
+      this.dx += 20,
+      this.dy -= 35 
+      this.spriteX = spriteMap.bullet.up.x
+      this.spriteY = 370
+    }
+    if (direction == 'down') {
+      this.dx += 20, 
+      this.dy += 15 
+      this.spriteX = spriteMap.bullet.down.x
+      this.spriteY = 370
+    }
+    if (direction == 'left') {
+     this.dx = this.dx,
+     this.dy -= 10
+     this.spriteX = spriteMap.bullet.left.x
+    this.spriteY = 370
+    }
+    if (direction == 'right') {
+      this.dx += 50,
+      this.dy -= 10 
+      this.spriteX = spriteMap.bullet.right.x
+      this.spriteY = 370
+    }
+  }
+
   move(direction: string) {
+    this.getShootDirection(direction)
     switch (direction) {
       case 'left':
         let bulletMoveLeft = setInterval(() => {
           this.dx -= this.speed
-        }, 30)
+        }, 16)
 
         if (this.dx <= 0) {
           clearInterval(bulletMoveLeft)
@@ -59,7 +89,7 @@ export class Bullet {
       case 'right':
         let bulletMoveRight = setInterval(() => {
           this.dx += this.speed
-        }, 30)
+        }, 16)
         if (this.dx <= 0) {
           clearInterval(bulletMoveRight)
         }
@@ -67,7 +97,7 @@ export class Bullet {
       case 'up':
         let bulletMoveUp = setInterval(() => {
           this.dy -= this.speed
-        }, 30)
+        }, 16)
         if (this.dx <= 0) {
           clearInterval(bulletMoveUp)
         }
@@ -75,11 +105,13 @@ export class Bullet {
       case 'down':
         let bulletMoveDown = setInterval(() => {
           this.dy += this.speed
-        }, 30)
+        }, 16)
         if (this.dx <= 0) {
           clearInterval(bulletMoveDown)
         }
         break
     }
   }
+ 
+
 }
