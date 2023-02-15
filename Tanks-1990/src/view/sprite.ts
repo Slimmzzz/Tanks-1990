@@ -14,8 +14,21 @@ export const spriteMap = {
         right1: {x: 392, y: 4},
         right2: {x: 460, y: 4}
       }
-    }
-
+    },
+    enemy1: {
+      width: 60,
+      height: 60,
+      grey: {
+        up1: {x: 524, y: 198},
+        up2: {x: 588, y: 198},
+        left1: {x: 648, y: 204},
+        left2: {x: 712, y: 204},
+        right1: {x: 908, y: 204},
+        right2: {x: 972, y: 204},
+        down1: {x: 780, y: 198},
+        down2: {x: 844, y: 198},
+      }
+    },
   },
   obstacles: {
     a: {x: 1052, y: 288},

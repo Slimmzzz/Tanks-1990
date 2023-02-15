@@ -1,7 +1,7 @@
 // @ts-ignore
-import SampleTank from "../model/sampleTank.ts";
+import Tank from "../model/sampleTank.ts";
 
-export function onTankMoveKeyPressFactory(tank: SampleTank) {
+export function onTankMoveKeyPressFactory(tank: Tank) {
   return function onTankMoveKeyPress(e: KeyboardEvent) {
     if (!tank.isMoving) {
       tank.isMoving = true;
@@ -19,7 +19,7 @@ export function onTankMoveKeyPressFactory(tank: SampleTank) {
   }
 }
 
-export function onTankMoveKeyUpFactory(tank: SampleTank) {
+export function onTankMoveKeyUpFactory(tank: Tank) {
   return function onTankMoveKeyUp(e: KeyboardEvent) {
     if (['w', 'a', 's', 'd'].includes(e.key)) {
       tank.isMoving = false;
