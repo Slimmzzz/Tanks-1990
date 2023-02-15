@@ -3,6 +3,18 @@ import Tank from './sampleTank.ts';
 // @ts-ignore
 import { direction } from '../interfaces.ts';
 
+function turnLeft(direction: direction) {
+  return direction === 'up' ? 'left' :
+  direction === 'left' ? 'down' :
+  direction === 'down' ? 'right' : 'up';
+}
+
+function turnRight(direction: direction) {
+  return direction === 'up' ? 'right' :
+  direction === 'right' ? 'down' :
+  direction === 'down' ? 'left' : 'up';
+}
+
 function changeDirection(tank: Tank) {
   let directions: direction[] = ['left', 'right', 'up', 'down'];
   directions.splice(directions.findIndex(d => d === tank.direction), 1);
@@ -45,9 +57,66 @@ export default function enemyBehaviour(tank: Tank) {
       tank.direction = changeDirection(tank);
     }
 
-    let randomTurnChance = Math.random() > 0.995;
+    let randomTurnChance = Math.random() > 0.98;
     if (randomTurnChance) {
-      tank.direction = changeDirection(tank);
+      let possibleDirection = Math.random() > 0.5 ? turnLeft(tank.direction) : turnRight(tank.direction);
+      let fakeTank = {
+        dx: tank.dx,
+        dy: tank.dy,
+        tankWidth: tank.tankWidth,
+        tankHeight: tank.tankHeight,
+        renderer: tank.renderer
+      };
+      let metObstacleOnWay = false;
+      switch (possibleDirection) {
+        case 'right': {
+          for (let i = 1; i < 100; i++) {
+            if (!(tank.checkCollisions.call(fakeTank, possibleDirection, false))) {
+              metObstacleOnWay = true;
+              break;
+            } else {
+              fakeTank.dx = fakeTank.dx + 1;
+            }
+          }
+          break;
+        }
+        case 'left': {
+          for (let i = 1; i < 100; i++) {
+            if (!(tank.checkCollisions.call(fakeTank, possibleDirection, false))) {
+              metObstacleOnWay = true;
+              break;
+            } else {
+              fakeTank.dx = fakeTank.dx - 1;
+            }
+          }
+          break;
+        }
+        case 'up': {
+          for (let i = 1; i < 100; i++) {
+            if (!(tank.checkCollisions.call(fakeTank, possibleDirection, false))) {
+              metObstacleOnWay = true;
+              break;
+            } else {
+              fakeTank.dy = fakeTank.dy - 1;
+            }
+          }
+          break;
+        }
+        case 'down': {
+          for (let i = 1; i < 100; i++) {
+            if (!(tank.checkCollisions.call(fakeTank, possibleDirection, false))) {
+              metObstacleOnWay = true;
+              break;
+            } else {
+              fakeTank.dy = fakeTank.dy + 1;
+            }
+          }
+          break;
+        }
+      }
+      if (!metObstacleOnWay) {
+        tank.direction = possibleDirection;
+      }
     }
     // let possibleLeftDirection = tank.direction === 'up' ? 'left' :
     //   tank.direction === 'left' ? 'down' :
