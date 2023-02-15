@@ -50,6 +50,7 @@ export default class SampleTank {
     right1: Coords
     right2: Coords
   }
+  reload: boolean = false
 
 
   constructor(tankOptions: TankOptions, renderer: Renderer) {
@@ -260,8 +261,15 @@ export default class SampleTank {
     }
   }
 
+
   shoot() {
-    return new Bullet({x: this.dx, y: this.dy}, this.renderer).move(this.direction)
+    if(this.reload === false){
+      this.reload = true
+      setTimeout(() => {
+        this.reload = false
+      }, 1000);
+       new Bullet({x: this.dx, y: this.dy}, this.renderer).move(this.direction)
+    }
   }
 
   private initKeyController() {
