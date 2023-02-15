@@ -115,7 +115,8 @@ export default class Tank {
     this._isMoving = isMoveKeyPressed;
   }
 
-  checkCollisions(direction: direction) {
+  checkCollisions(direction: direction, checkCollisionsWithTanks: boolean = true) {
+    
     // Collision with canvas boundries
     if ((this.dx < 0 && direction === 'left')
     || (this.dx > this.renderer.canvas.width - this.tankWidth && direction === 'right') 
@@ -125,12 +126,78 @@ export default class Tank {
       return false;
     }
 
+    // Collisions with tanks
+    if (checkCollisionsWithTanks) {
+      let collidesWithTank = false;
+      for (const tank of this.renderer.tanks) {
+        if (tank.id !== this.id) {
+          if (direction === 'up') {
+            if (this.dy === tank.dy + tank.tankHeight + 1) {
+              if (this.dx === tank.dx || (this.dx > tank.dx &&
+                this.dx < tank.dx + tank.tankWidth) ||
+                (this.dx + this.tankWidth > tank.dx &&
+                  this.dx + this.tankWidth < tank.dx + tank.tankWidth)
+                ) {
+                collidesWithTank = true;
+                break;
+              }
+            }
+          } else if (direction === 'down') {
+            if (this.dy + tank.tankHeight > tank.dy - 1) {
+              if (
+                this.dx === tank.dx ||
+                (this.dx > tank.dx &&
+                  this.dx < tank.dx + tank.tankWidth) ||
+                  (this.dx + this.tankWidth > tank.dx &&
+                    this.dx + this.tankWidth < tank.dx + tank.tankWidth)  
+              ) {
+                collidesWithTank = true;
+                break;
+              }
+            }
+          } else if (direction === 'left') {
+            if (this.dx === tank.dx + tank.tankWidth + 1) {
+              if (
+                this.dy === tank.dy ||
+                (this.dy > tank.dy &&
+                  this.dy < tank.dy + tank.tankHeight) ||
+                (this.dy + this.tankHeight > tank.dy &&
+                  this.dy + this.tankHeight < tank.dy + tank.tankHeight)
+              ) {
+                collidesWithTank = true; 
+                break;
+              }
+            }
+          } else if (direction === 'right') {
+            if (this.dx + this.tankWidth === tank.dx - 1) {
+              if (
+                this.dy === tank.dy ||
+                (this.dy > tank.dy &&
+                  this.dy < tank.dy + tank.tankHeight) ||
+                (this.dy + this.tankHeight > tank.dy &&
+                  this.dy + this.tankHeight < tank.dy + tank.tankHeight)
+              ) {
+                collidesWithTank = true; 
+                break;
+              }
+            }
+          }
+        }
+      }
+      // console.log(collidesWithTank);
+      if (collidesWithTank) {
+        return false;
+      }
+    }
+    
+    // Collision with obstacles
+
     let maybeObstacles = [];
     const matrix = this.renderer.obstacleCoordsMatrix;
     if (direction === 'up') {
       const LookupY = Math.floor(this.dy / 32);
-      const LookupXLeft = Math.floor((this.dx) / 32);
-      const LookupXRight = Math.floor((this.dx + this.tankWidth) / 32);
+      const LookupXLeft = Math.floor((this.dx + 1) / 32);
+      const LookupXRight = Math.floor((this.dx + this.tankWidth - 1) / 32);
       
       if (matrix[LookupY][LookupXLeft] instanceof Obstacle) {
         maybeObstacles.push(matrix[LookupY][LookupXLeft]);
@@ -145,8 +212,8 @@ export default class Tank {
       }
     } else if (direction === 'down') {
       const LookupY = Math.floor((this.dy + this.tankHeight) / 32);
-      const LookupXLeft = Math.floor((this.dx) / 32);
-      const LookupXRight = Math.floor((this.dx + this.tankWidth) / 32);
+      const LookupXLeft = Math.floor((this.dx + 1) / 32);
+      const LookupXRight = Math.floor((this.dx + this.tankWidth - 1) / 32);
 
       if (matrix[LookupY][LookupXLeft] instanceof Obstacle) {
         maybeObstacles.push(matrix[LookupY][LookupXLeft]);
@@ -161,8 +228,8 @@ export default class Tank {
       }
     } else if (direction === 'left') {
       const lookupX = Math.floor(this.dx / 32);
-      const lookupYUp = Math.floor(this.dy / 32);
-      const lookupYDown = Math.floor((this.dy + this.tankHeight) / 32);
+      const lookupYUp = Math.floor((this.dy + 1) / 32);
+      const lookupYDown = Math.floor((this.dy + this.tankHeight - 1) / 32);
 
       if (matrix[lookupYUp][lookupX] instanceof Obstacle) {
         maybeObstacles.push(matrix[lookupYUp][lookupX]);
@@ -177,8 +244,8 @@ export default class Tank {
       }
     } else if (direction === 'right') {
       const lookupX = Math.floor((this.dx + this.tankWidth) / 32);
-      const lookupYUp = Math.floor(this.dy / 32);
-      const lookupYDown = Math.floor((this.dy + this.tankHeight) / 32);
+      const lookupYUp = Math.floor((this.dy + 1) / 32);
+      const lookupYDown = Math.floor((this.dy + this.tankHeight - 1) / 32);
 
       if (matrix[lookupYUp][lookupX] instanceof Obstacle) {
         maybeObstacles.push(matrix[lookupYUp][lookupX]);
@@ -229,15 +296,19 @@ export default class Tank {
       }
     }
 
+    const collisionCheckResult = this.checkCollisions(direction);
     if (!this.blockedMoves[direction]) {
       this._isMoving = true;
-      const collisionCheckResult = this.checkCollisions(direction);
       this.shiftCallback(direction, collisionCheckResult);
 
       if (!collisionCheckResult) {
         this.blockedMoves[direction] = true;
         this._isMoving = false;
         return false;
+      }
+    } else {
+      if (collisionCheckResult) {
+        this.blockedMoves[direction] = false;
       }
     }
   }
@@ -246,22 +317,22 @@ export default class Tank {
     this.direction = direction;
     switch (direction) {
       case 'right':
-        collisionCheckResult ? this.dx += 1 : this.dx -= 1;
+        collisionCheckResult ? this.dx += 1 : this.dx -= 0;
         this.spriteX = this.spriteX === this.tankModel.right1.x ? this.tankModel.right2.x : this.tankModel.right1.x;
         this.spriteY = this.tankModel.right1.y;
         break;
       case 'left':
-        collisionCheckResult ? this.dx -= 1 : this.dx += 1;
+        collisionCheckResult ? this.dx -= 1 : this.dx += 0;
         this.spriteX = this.spriteX === this.tankModel.left1.x ? this.tankModel.left2.x : this.tankModel.left1.x;
         this.spriteY = this.tankModel.left1.y;
         break;
       case 'up':
-        collisionCheckResult ? this.dy -= 1 : this.dy += 1;
+        collisionCheckResult ? this.dy -= 1 : this.dy += 0;
         this.spriteX = this.spriteX === this.tankModel.up1.x ? this.tankModel.up2.x : this.tankModel.up1.x;
         this.spriteY = this.tankModel.up1.y;
         break;
       case 'down':
-        collisionCheckResult ? this.dy += 1 : this.dy -= 1;
+        collisionCheckResult ? this.dy += 1 : this.dy -= 0;
         this.spriteX = this.spriteX === this.tankModel.down1.x ? this.tankModel.down2.x : this.tankModel.down1.x;
         this.spriteY = this.tankModel.down1.y;
         break;
