@@ -8,7 +8,7 @@ import Renderer from "./Renderer.ts";
 import { Coords } from "./sampleTank.ts";
 
 
-export class SampleObstacle {
+export class Obstacle {
   renderer: Renderer
   x: number
   y: number
@@ -98,7 +98,7 @@ export class ObstacleCollection {
   _obstacles: {} = {}
   map: LevelMapEntity[]
   nextObstacleID: number = 1
-  realMap: (SampleObstacle | null)[][] = []
+  realMap: (Obstacle | null)[][] = []
 
   constructor(renderer: Renderer, map?: LevelMapEntity[]) {
     this.renderer = renderer;
@@ -116,7 +116,7 @@ export class ObstacleCollection {
       y: y,
       type: type
     }
-    const obstacle = new SampleObstacle(options, this.renderer);
+    const obstacle = new Obstacle(options, this.renderer);
     this.nextObstacleID += 1;
     this.renderer.addObstacle(obstacle);
     Object.defineProperty(this._obstacles, `${options.id}`, {

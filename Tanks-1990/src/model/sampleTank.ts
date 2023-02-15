@@ -3,16 +3,19 @@ import { Coords, direction, TankBlockedMoves, TankOptions } from "../interfaces.
 // @ts-ignore
 import Renderer from "./Renderer.ts";
 // @ts-ignore
-import { SampleObstacle } from "./sampleObstacle.ts";
+import { Obstacle } from "./sampleObstacle.ts";
 // @ts-ignore
 import { spriteMap } from "../view/sprite.ts";
 // @ts-ignore
 import { KeyController } from "../controller/KeyController.ts";
 // @ts-ignore
 import { Bullet } from "./Bullet.ts";
+// @ts-ignore
+import enemyBehaviour from './ai.ts';
 
 
-export default class SampleTank {
+export default class Tank {
+  id: number
   dx: number
   dy: number
   tankWidth: number = 50
@@ -54,8 +57,11 @@ export default class SampleTank {
 
   constructor(tankOptions: TankOptions, renderer: Renderer) {
     this.renderer = renderer;
+    this.id = tankOptions.id;
     this.dx = tankOptions.x;
     this.dy = tankOptions.y;
+    this.spriteWidth = tankOptions.tankModelWidth || 52;
+    this.spriteHeight = tankOptions.tankModelHeight || 52;
     this.isEnemy = tankOptions.isEnemy;
     this.tankModel = spriteMap.tanks[tankOptions.tankType || 'player'][tankOptions.tankColor || 'yellow'];
     this.direction = tankOptions.startDirection as direction;
@@ -82,15 +88,23 @@ export default class SampleTank {
     };
     this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
     if (this.isEnemy) {
-      // this.initEnemyBehavior();
+      if (!tankOptions.ignoreAIBehaviour) {
+        this.initEnemyBehavior();
+      }
     } else {
+      Object.defineProperty(window, '_tank', {
+        value: this,
+        enumerable: true,
+        configurable: true
+      })
       this.initKeyController();
     }
-    Object.defineProperty(window, '_tank', {
-      value: this,
-      enumerable: true,
-      configurable: true
-    })
+
+    this.renderer.tanks.push(this);
+  }
+
+  initEnemyBehavior() {
+    enemyBehaviour(this);
   }
 
   get isMoving() {
@@ -101,7 +115,8 @@ export default class SampleTank {
     this._isMoving = isMoveKeyPressed;
   }
 
-  checkCollisions(direction: direction) {
+  checkCollisions(direction: direction, checkCollisionsWithTanks: boolean = true) {
+    
     // Collision with canvas boundries
     if ((this.dx < 0 && direction === 'left')
     || (this.dx > this.renderer.canvas.width - this.tankWidth && direction === 'right') 
@@ -111,69 +126,135 @@ export default class SampleTank {
       return false;
     }
 
+    // Collisions with tanks
+    if (checkCollisionsWithTanks) {
+      let collidesWithTank = false;
+      for (const tank of this.renderer.tanks) {
+        if (tank.id !== this.id) {
+          if (direction === 'up') {
+            if (this.dy === tank.dy + tank.tankHeight + 1) {
+              if (this.dx === tank.dx || (this.dx > tank.dx &&
+                this.dx < tank.dx + tank.tankWidth) ||
+                (this.dx + this.tankWidth > tank.dx &&
+                  this.dx + this.tankWidth < tank.dx + tank.tankWidth)
+                ) {
+                collidesWithTank = true;
+                break;
+              }
+            }
+          } else if (direction === 'down') {
+            if (this.dy + tank.tankHeight > tank.dy - 1) {
+              if (
+                this.dx === tank.dx ||
+                (this.dx > tank.dx &&
+                  this.dx < tank.dx + tank.tankWidth) ||
+                  (this.dx + this.tankWidth > tank.dx &&
+                    this.dx + this.tankWidth < tank.dx + tank.tankWidth)  
+              ) {
+                collidesWithTank = true;
+                break;
+              }
+            }
+          } else if (direction === 'left') {
+            if (this.dx === tank.dx + tank.tankWidth + 1) {
+              if (
+                this.dy === tank.dy ||
+                (this.dy > tank.dy &&
+                  this.dy < tank.dy + tank.tankHeight) ||
+                (this.dy + this.tankHeight > tank.dy &&
+                  this.dy + this.tankHeight < tank.dy + tank.tankHeight)
+              ) {
+                collidesWithTank = true; 
+                break;
+              }
+            }
+          } else if (direction === 'right') {
+            if (this.dx + this.tankWidth === tank.dx - 1) {
+              if (
+                this.dy === tank.dy ||
+                (this.dy > tank.dy &&
+                  this.dy < tank.dy + tank.tankHeight) ||
+                (this.dy + this.tankHeight > tank.dy &&
+                  this.dy + this.tankHeight < tank.dy + tank.tankHeight)
+              ) {
+                collidesWithTank = true; 
+                break;
+              }
+            }
+          }
+        }
+      }
+      // console.log(collidesWithTank);
+      if (collidesWithTank) {
+        return false;
+      }
+    }
+    
+    // Collision with obstacles
+
     let maybeObstacles = [];
     const matrix = this.renderer.obstacleCoordsMatrix;
     if (direction === 'up') {
       const LookupY = Math.floor(this.dy / 32);
-      const LookupXLeft = Math.floor((this.dx) / 32);
-      const LookupXRight = Math.floor((this.dx + this.tankWidth) / 32);
+      const LookupXLeft = Math.floor((this.dx + 1) / 32);
+      const LookupXRight = Math.floor((this.dx + this.tankWidth - 1) / 32);
       
-      if (matrix[LookupY][LookupXLeft] instanceof SampleObstacle) {
+      if (matrix[LookupY][LookupXLeft] instanceof Obstacle) {
         maybeObstacles.push(matrix[LookupY][LookupXLeft]);
       }
-      if (matrix[LookupY][LookupXRight] instanceof SampleObstacle) {
+      if (matrix[LookupY][LookupXRight] instanceof Obstacle) {
         maybeObstacles.push(matrix[LookupY][LookupXRight]);
       }
       if (LookupXRight - LookupXLeft > 1) {
-        if (matrix[LookupY][LookupXLeft + 1] instanceof SampleObstacle) {
+        if (matrix[LookupY][LookupXLeft + 1] instanceof Obstacle) {
           maybeObstacles.push(matrix[LookupY][LookupXLeft + 1]);
         }
       }
     } else if (direction === 'down') {
       const LookupY = Math.floor((this.dy + this.tankHeight) / 32);
-      const LookupXLeft = Math.floor((this.dx) / 32);
-      const LookupXRight = Math.floor((this.dx + this.tankWidth) / 32);
+      const LookupXLeft = Math.floor((this.dx + 1) / 32);
+      const LookupXRight = Math.floor((this.dx + this.tankWidth - 1) / 32);
 
-      if (matrix[LookupY][LookupXLeft] instanceof SampleObstacle) {
+      if (matrix[LookupY][LookupXLeft] instanceof Obstacle) {
         maybeObstacles.push(matrix[LookupY][LookupXLeft]);
       }
-      if (matrix[LookupY][LookupXRight] instanceof SampleObstacle) {
+      if (matrix[LookupY][LookupXRight] instanceof Obstacle) {
         maybeObstacles.push(matrix[LookupY][LookupXRight]);
       }
       if (LookupXRight - LookupXLeft > 1) {
-        if (matrix[LookupY][LookupXLeft + 1] instanceof SampleObstacle) {
+        if (matrix[LookupY][LookupXLeft + 1] instanceof Obstacle) {
           maybeObstacles.push(matrix[LookupY][LookupXLeft + 1]);
         }
       }
     } else if (direction === 'left') {
       const lookupX = Math.floor(this.dx / 32);
-      const lookupYUp = Math.floor(this.dy / 32);
-      const lookupYDown = Math.floor((this.dy + this.tankHeight) / 32);
+      const lookupYUp = Math.floor((this.dy + 1) / 32);
+      const lookupYDown = Math.floor((this.dy + this.tankHeight - 1) / 32);
 
-      if (matrix[lookupYUp][lookupX] instanceof SampleObstacle) {
+      if (matrix[lookupYUp][lookupX] instanceof Obstacle) {
         maybeObstacles.push(matrix[lookupYUp][lookupX]);
       }
-      if (matrix[lookupYDown][lookupX] instanceof SampleObstacle) {
+      if (matrix[lookupYDown][lookupX] instanceof Obstacle) {
         maybeObstacles.push(matrix[lookupYDown][lookupX]);
       }
       if (lookupYDown - lookupYUp > 1) {
-        if (matrix[lookupYUp + 1][lookupX] instanceof SampleObstacle) {
+        if (matrix[lookupYUp + 1][lookupX] instanceof Obstacle) {
           maybeObstacles.push(matrix[lookupYUp + 1][lookupX]);
         }
       }
     } else if (direction === 'right') {
       const lookupX = Math.floor((this.dx + this.tankWidth) / 32);
-      const lookupYUp = Math.floor(this.dy / 32);
-      const lookupYDown = Math.floor((this.dy + this.tankHeight) / 32);
+      const lookupYUp = Math.floor((this.dy + 1) / 32);
+      const lookupYDown = Math.floor((this.dy + this.tankHeight - 1) / 32);
 
-      if (matrix[lookupYUp][lookupX] instanceof SampleObstacle) {
+      if (matrix[lookupYUp][lookupX] instanceof Obstacle) {
         maybeObstacles.push(matrix[lookupYUp][lookupX]);
       }
-      if (matrix[lookupYDown][lookupX] instanceof SampleObstacle) {
+      if (matrix[lookupYDown][lookupX] instanceof Obstacle) {
         maybeObstacles.push(matrix[lookupYDown][lookupX]);
       }
       if (lookupYDown - lookupYUp > 1) {
-        if (matrix[lookupYUp + 1][lookupX] instanceof SampleObstacle) {
+        if (matrix[lookupYUp + 1][lookupX] instanceof Obstacle) {
           maybeObstacles.push(matrix[lookupYUp + 1][lookupX]);
         }
       }
@@ -215,15 +296,19 @@ export default class SampleTank {
       }
     }
 
+    const collisionCheckResult = this.checkCollisions(direction);
     if (!this.blockedMoves[direction]) {
       this._isMoving = true;
-      const collisionCheckResult = this.checkCollisions(direction);
       this.shiftCallback(direction, collisionCheckResult);
 
       if (!collisionCheckResult) {
         this.blockedMoves[direction] = true;
         this._isMoving = false;
         return false;
+      }
+    } else {
+      if (collisionCheckResult) {
+        this.blockedMoves[direction] = false;
       }
     }
   }
@@ -232,22 +317,22 @@ export default class SampleTank {
     this.direction = direction;
     switch (direction) {
       case 'right':
-        collisionCheckResult ? this.dx += 1 : this.dx -= 1;
+        collisionCheckResult ? this.dx += 1 : this.dx -= 0;
         this.spriteX = this.spriteX === this.tankModel.right1.x ? this.tankModel.right2.x : this.tankModel.right1.x;
         this.spriteY = this.tankModel.right1.y;
         break;
       case 'left':
-        collisionCheckResult ? this.dx -= 1 : this.dx += 1;
+        collisionCheckResult ? this.dx -= 1 : this.dx += 0;
         this.spriteX = this.spriteX === this.tankModel.left1.x ? this.tankModel.left2.x : this.tankModel.left1.x;
         this.spriteY = this.tankModel.left1.y;
         break;
       case 'up':
-        collisionCheckResult ? this.dy -= 1 : this.dy += 1;
+        collisionCheckResult ? this.dy -= 1 : this.dy += 0;
         this.spriteX = this.spriteX === this.tankModel.up1.x ? this.tankModel.up2.x : this.tankModel.up1.x;
         this.spriteY = this.tankModel.up1.y;
         break;
       case 'down':
-        collisionCheckResult ? this.dy += 1 : this.dy -= 1;
+        collisionCheckResult ? this.dy += 1 : this.dy -= 0;
         this.spriteX = this.spriteX === this.tankModel.down1.x ? this.tankModel.down2.x : this.tankModel.down1.x;
         this.spriteY = this.tankModel.down1.y;
         break;
@@ -278,8 +363,8 @@ export default class SampleTank {
       'd': () => { _move('right'); },
     }, 16);  
 
-    let shootController = new KeyController({
-      ' ': () => { this.shoot()}
-    });
+    // let shootController = new KeyController({
+    //   ' ': () => { this.shoot(); }
+    // });
   }
 }

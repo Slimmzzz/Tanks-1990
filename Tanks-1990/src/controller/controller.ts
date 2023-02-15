@@ -3,7 +3,7 @@ import Renderer from "../model/Renderer.ts";
 // @ts-ignore
 import { ObstacleCollection } from "../model/sampleObstacle.ts";
 // @ts-ignore
-import SampleTank from "../model/sampleTank.ts";
+import Tank from "../model/sampleTank.ts";
 // @ts-ignore
 import levels from "../view/levels.ts";
 
@@ -16,6 +16,8 @@ import {
 import { KeyController, KeyCallbackMap } from "./KeyController.ts";
 // @ts-ignore
 import { direction } from '../interfaces.ts';
+// @ts-ignore
+import { spriteMap } from '../view/sprite.ts';
 
 export default function main() {
   const canvasRoot = document.createElement('div');
@@ -47,18 +49,47 @@ export default function main() {
     configurable: true,
   });
 
-  const testTank = new SampleTank({
+  const testTank = new Tank({
+    id: 1,
     x: 263,
     y: 832 - 57,
     startDirection: 'up',
     isEnemy: false
   }, renderer);
-  // const testTank1 = new SampleTank({
-  //   x: 22,
-  //   y: 422,
-  //   startDirection: 'up',
-  //   isEnemy: true
-  // }, renderer);
+  const testTank1 = new Tank({
+    id: 2,
+    x: 2,
+    y: 2,
+    startDirection: 'down',
+    isEnemy: true,
+    tankType: 'enemy1',
+    tankColor: 'grey',
+    tankModelWidth: spriteMap.tanks.enemy1.width,
+    tankModelHeight: spriteMap.tanks.enemy1.height,
+    // ignoreAIBehaviour: true,
+  }, renderer);
+  const testTank2 = new Tank({
+    id: 3,
+    x: 832 - 60,
+    y: 2,
+    startDirection: 'left',
+    isEnemy: true,
+    tankType: 'enemy1',
+    tankColor: 'grey',
+    tankModelWidth: spriteMap.tanks.enemy1.width,
+    tankModelHeight: spriteMap.tanks.enemy1.height
+  }, renderer);
+  const testTank3 = new Tank({
+    id: 4,
+    x: (832 - 60) / 2,
+    y: 2,
+    startDirection: 'right',
+    isEnemy: true,
+    tankType: 'enemy1',
+    tankColor: 'grey',
+    tankModelWidth: spriteMap.tanks.enemy1.width,
+    tankModelHeight: spriteMap.tanks.enemy1.height
+  }, renderer);
   // const onKeyDownListener = onTankMoveKeyPressFactory(testTank);
   const onKeyUpListener = onTankMoveKeyUpFactory(testTank);
 
@@ -67,7 +98,7 @@ export default function main() {
 
   // Create test obstacles
 
-  const obstacleCollection = new ObstacleCollection(renderer, levels['1']);
+  const obstacleCollection = new ObstacleCollection(renderer, levels['4']);
 
   Object.defineProperty(window, '_obstacleCollection', { 
     value: obstacleCollection,
