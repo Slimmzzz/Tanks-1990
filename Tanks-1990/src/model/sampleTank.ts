@@ -371,8 +371,8 @@ export default class Tank {
       'd': () => { _move('right'); },
     }, 16);  
 
-    // let shootController = new KeyController({
-    //   ' ': () => { this.shoot(); }
-    // });
+    let shootController = new KeyController({
+      ' ': () => { this.shoot(); }
+    });
   }
 }

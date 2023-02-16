@@ -1,9 +1,14 @@
 // @ts-ignore
+import { TankBlockedMoves } from '../interfaces';
+// @ts-ignore
 import sprite, { spriteMap } from '../view/sprite.ts'
 // @ts-ignore
 import Renderer from './Renderer.ts'
+// @ts-ignore
+import { Obstacle } from "./sampleObstacle.ts";
 
 interface BulletOptions {
+  id: number
   x: number
   y: number
 }
@@ -21,11 +26,22 @@ export class Bullet {
   timeoutID: number = 0
   isAlive: boolean = true
   speed: number = 2.5
+  id: number
+  ignoreIce: boolean = false
+  ignoreKeyboard: boolean = false
+  blockedMoves: TankBlockedMoves = {
+    left: false,
+    right: false,
+    up: false,
+    down: false
+  }
+  bulletFly: boolean = true
 
   _pingRendererTimeoutCallback: () => void
 
   constructor(bulletOptions: BulletOptions, renderer: Renderer) {
     this.renderer = renderer
+    this.id = bulletOptions.id
     this.dx = bulletOptions.x
     this.dy = bulletOptions.y
 
@@ -70,12 +86,29 @@ export class Bullet {
     }
   }
 
+   checkForObstacle(obstacleMap: Obstacle) {
+    const LookupY = Math.floor((this.dy + this.bulletHeight) / 32);
+      const LookupXLeft = Math.floor((this.dx + 1) / 32);
+      const LookupXRight = Math.floor((this.dx + this.bulletWidth - 1) / 32);
+      if(obstacleMap[LookupY][LookupXLeft] != null){
+        this.bulletFly = false
+        this.explosion()
+      }
+  }
+  
+
+
+
   move(direction: string) {
     this.getShootDirection(direction)
     switch (direction) {
       case 'left':
         let bulletMoveLeft = setInterval(() => {
+          this.checkForObstacle(this.renderer.obstacleCoordsMatrix)
           this.dx -= this.speed
+          if(this.bulletFly == false){
+            clearInterval(bulletMoveLeft)
+          }
           if (this.dx <= 10) {
             this.explosion()
             clearInterval(bulletMoveLeft)
@@ -84,8 +117,12 @@ export class Bullet {
         break
       case 'right':
         let bulletMoveRight = setInterval(() => {
+          this.checkForObstacle(this.renderer.obstacleCoordsMatrix)
           this.dx += this.speed
-          if (this.dx >= 823) {
+          if(this.bulletFly == false){
+            clearInterval(bulletMoveRight)
+          }
+          else if (this.dx >= 823) {
             this.explosion()
             clearInterval(bulletMoveRight)
           }
@@ -94,7 +131,11 @@ export class Bullet {
       case 'up':
         let bulletMoveUp = setInterval(() => {
           this.dy -= this.speed
-          if (this.dy <= 0) {
+          this.checkForObstacle(this.renderer.obstacleCoordsMatrix)
+          if(this.bulletFly == false){
+            clearInterval(bulletMoveUp)
+          }
+          else if (this.dy <= 0) {
             this.explosion()
             clearInterval(bulletMoveUp)
           }
@@ -103,7 +144,11 @@ export class Bullet {
       case 'down':
         let bulletMoveDown = setInterval(() => {
           this.dy += this.speed
-          if (this.dy >= 788) {
+          this.checkForObstacle(this.renderer.obstacleCoordsMatrix)
+          if(this.bulletFly == false){
+            clearInterval(bulletMoveDown)
+          }
+          else if (this.dy >= 788) {
             this.explosion()
             clearInterval(bulletMoveDown)
           }
@@ -121,7 +166,6 @@ export class Bullet {
       setInterval(() => {
         if (spriteCounter == 0) {
           spriteCounter++
-          console.log('1', spriteCounter)
           this.spriteX = spriteExplosionX1
           this.spriteY = spriteExplosionY
           this.bulletWidth = 50
@@ -133,7 +177,6 @@ export class Bullet {
         }
         else if (spriteCounter == 1) {
           spriteCounter++
-          console.log('2', spriteCounter)
           this.spriteX = spriteExplosionX2
           this.spriteY = spriteExplosionY
           this.bulletWidth = 50
@@ -143,7 +186,6 @@ export class Bullet {
         }
         else if (spriteCounter == 2) {
           spriteCounter++
-          console.log('3', spriteCounter)
           this.spriteX = spriteExplosionX3
           this.spriteY = spriteExplosionY
           this.bulletWidth = 50
@@ -155,4 +197,5 @@ export class Bullet {
         }
       }, 50)
   }
+
 }
