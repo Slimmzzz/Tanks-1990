@@ -2,6 +2,7 @@
 import { DrawOptions } from "../interfaces.ts"
 // @ts-ignore
 import sprite from "../view/sprite.ts"
+import { Bullet } from "./Bullet";
 // @ts-ignore
 import { Obstacle } from "./sampleObstacle.ts"
 // @ts-ignore
@@ -16,6 +17,8 @@ export default class Renderer {
   isActive: boolean = false
   obstacles: Obstacle[] = []
   tanks: Tank[] = []
+  bullets: Bullet[] = []
+  bulletNextID: number = 1
   
   constructor(root: HTMLDivElement) {
     this.canvas = root.appendChild(document.createElement('canvas'));

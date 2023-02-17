@@ -1,11 +1,15 @@
 // @ts-ignore
-import { TankBlockedMoves } from '../interfaces';
+import { TankBlockedMoves, direction } from '../interfaces';
 // @ts-ignore
 import sprite, { spriteMap } from '../view/sprite.ts'
 // @ts-ignore
 import Renderer from './Renderer.ts'
 // @ts-ignore
 import { Obstacle } from "./sampleObstacle.ts";
+// @ts-ignore
+import Tank from './sampleTank.ts';
+// @ts-ignore
+import { collidesWithCanvasBoundaries, FakeCreature } from './helpers.ts';
 
 interface BulletOptions {
   id: number
@@ -36,11 +40,14 @@ export class Bullet {
     down: false
   }
   bulletFly: boolean = true
+  tank: Tank
+  bulletMoveInterval: number = 0
 
   _pingRendererTimeoutCallback: () => void
 
-  constructor(bulletOptions: BulletOptions, renderer: Renderer) {
+  constructor(bulletOptions: BulletOptions, renderer: Renderer, tank: Tank) {
     this.renderer = renderer
+    this.tank = tank;
     this.id = bulletOptions.id
     this.dx = bulletOptions.x
     this.dy = bulletOptions.y
@@ -60,7 +67,8 @@ export class Bullet {
         this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16)
       }
     }
-    this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16)
+    this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
+    this.renderer.bullets.push(this);
   }
 
   getShootDirection(direction: string) {
@@ -86,71 +94,60 @@ export class Bullet {
     }
   }
 
-   checkForObstacle(obstacleMap: Obstacle) {
-    const LookupY = Math.floor((this.dy + this.bulletHeight) / 32);
-      const LookupXLeft = Math.floor((this.dx + 1) / 32);
-      const LookupXRight = Math.floor((this.dx + this.bulletWidth - 1) / 32);
-      if(obstacleMap[LookupY][LookupXLeft] != null){
-        this.bulletFly = false
-        this.explosion()
-      }
+  checkForObstacle(direction: direction) {
+    // Check for canvas boundries
+    if (collidesWithCanvasBoundaries(this, direction)) {
+      console.log('Here');
+      this.bulletFly = false;
+      return;
+    }
+
+    const obstacleMap = this.renderer.obstacleCoordsMatrix;
+    const LookupY = Math.floor((this.dy + this.height) / 32);
+    const LookupXLeft = Math.floor((this.dx + 1) / 32);
+    const LookupXRight = Math.floor((this.dx + this.width - 1) / 32);
+    if(obstacleMap[LookupY][LookupXLeft] != null){
+      this.bulletFly = false
+      this.explosion()
+    }
   }
   
-
-
-
   move(direction: string) {
     this.getShootDirection(direction)
     switch (direction) {
       case 'left':
-        let bulletMoveLeft = setInterval(() => {
-          this.checkForObstacle(this.renderer.obstacleCoordsMatrix)
+        this.bulletMoveInterval = setInterval(() => {
+          this.checkForObstacle(direction)
           this.dx -= this.speed
           if(this.bulletFly == false){
-            clearInterval(bulletMoveLeft)
-          }
-          if (this.dx <= 10) {
-            this.explosion()
-            clearInterval(bulletMoveLeft)
+            this.destroy()
           }
         }, 16)
         break
       case 'right':
-        let bulletMoveRight = setInterval(() => {
-          this.checkForObstacle(this.renderer.obstacleCoordsMatrix)
+        this.bulletMoveInterval = setInterval(() => {
+          this.checkForObstacle(direction)
           this.dx += this.speed
           if(this.bulletFly == false){
-            clearInterval(bulletMoveRight)
-          }
-          else if (this.dx >= 823) {
-            this.explosion()
-            clearInterval(bulletMoveRight)
+            this.destroy(false)
           }
         }, 16)
         break
       case 'up':
-        let bulletMoveUp = setInterval(() => {
+        this.bulletMoveInterval = setInterval(() => {
           this.dy -= this.speed
-          this.checkForObstacle(this.renderer.obstacleCoordsMatrix)
+          this.checkForObstacle(direction)
           if(this.bulletFly == false){
-            clearInterval(bulletMoveUp)
-          }
-          else if (this.dy <= 0) {
-            this.explosion()
-            clearInterval(bulletMoveUp)
+            this.destroy()
           }
         }, 16)
         break
       case 'down':
-        let bulletMoveDown = setInterval(() => {
+        this.bulletMoveInterval = setInterval(() => {
           this.dy += this.speed
-          this.checkForObstacle(this.renderer.obstacleCoordsMatrix)
+          this.checkForObstacle(direction)
           if(this.bulletFly == false){
-            clearInterval(bulletMoveDown)
-          }
-          else if (this.dy >= 788) {
-            this.explosion()
-            clearInterval(bulletMoveDown)
+            this.destroy()
           }
         }, 16)
         break
@@ -198,4 +195,15 @@ export class Bullet {
       }, 50)
   }
 
+  destroy(isExploding: boolean = true) {
+    clearInterval(this.bulletMoveInterval);
+    if (isExploding) {
+      this.explosion();
+    }
+    this.tank.hasActiveBullet = false;
+    const spliceIndex = this.renderer.bullets.findIndex( (b: Bullet) => {
+      return b.id === this.id;
+    });
+    this.renderer.bullets.splice(spliceIndex, 1);
+  }
 }

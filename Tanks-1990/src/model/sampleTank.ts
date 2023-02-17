@@ -12,6 +12,8 @@ import { KeyController } from "../controller/KeyController.ts";
 import { Bullet } from "./Bullet.ts";
 // @ts-ignore
 import enemyBehaviour from './ai.ts';
+// @ts-ignore
+import { collidesWithCanvasBoundaries } from "./helpers.ts";
 
 
 export default class Tank {
@@ -54,6 +56,7 @@ export default class Tank {
     right2: Coords
   }
   reload: boolean = false
+  hasActiveBullet: boolean = false
 
 
   constructor(tankOptions: TankOptions, renderer: Renderer) {
@@ -119,11 +122,7 @@ export default class Tank {
   checkCollisions(direction: direction, checkCollisionsWithTanks: boolean = true) {
     
     // Collision with canvas boundries
-    if ((this.dx < 0 && direction === 'left')
-    || (this.dx > this.renderer.canvas.width - this.tankWidth && direction === 'right') 
-    || (this.dy < 0 && direction === 'up')
-    || (this.dy >= this.renderer.canvas.height - this.tankHeight && direction === 'down')
-    ) {
+    if (collidesWithCanvasBoundaries(this, direction)) {
       return false;
     }
 
@@ -348,12 +347,21 @@ export default class Tank {
 
 
   shoot() {
-    if(this.reload === false){
-      this.reload = true
-      setTimeout(() => {
-        this.reload = false
-      }, 1000);
-       new Bullet({x: this.dx, y: this.dy}, this.renderer).move(this.direction)
+    // if(this.reload === false){
+    //   this.reload = true
+    //   setTimeout(() => {
+    //     this.reload = false
+    //   }, 1000);
+       
+    // }
+    if (!this.hasActiveBullet) {
+      new Bullet({
+        id: this.renderer.nextBulletID,
+        x: this.dx, 
+        y: this.dy
+      }, this.renderer, this).move(this.direction);
+      this.hasActiveBullet = true;
+      this.renderer.nextBulletID += 1;
     }
   }
 
