@@ -53,6 +53,7 @@ export default class Tank {
     right1: Coords
     right2: Coords
   }
+  reload: boolean = false
 
 
   constructor(tankOptions: TankOptions, renderer: Renderer) {
@@ -345,8 +346,15 @@ export default class Tank {
     }
   }
 
+
   shoot() {
-    return new Bullet({x: this.dx, y: this.dy}, this.renderer).move(this.direction)
+    if(this.reload === false){
+      this.reload = true
+      setTimeout(() => {
+        this.reload = false
+      }, 1000);
+       new Bullet({x: this.dx, y: this.dy}, this.renderer).move(this.direction)
+    }
   }
 
   private initKeyController() {
@@ -363,8 +371,8 @@ export default class Tank {
       'd': () => { _move('right'); },
     }, 16);  
 
-    // let shootController = new KeyController({
-    //   ' ': () => { this.shoot(); }
-    // });
+    let shootController = new KeyController({
+      ' ': () => { this.shoot(); }
+    });
   }
 }
