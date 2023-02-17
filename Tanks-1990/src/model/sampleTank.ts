@@ -18,8 +18,8 @@ export default class Tank {
   id: number
   dx: number
   dy: number
-  tankWidth: number = 50
-  tankHeight: number = 50
+  width: number = 50
+  height: number = 50
   spriteX: number = 0
   spriteY: number = 0
   spriteWidth: number = 52
@@ -78,8 +78,8 @@ export default class Tank {
         spriteY: this.spriteY,
         spriteWidth: this.spriteWidth,
         spriteHeight: this.spriteHeight,
-        canvasWidth: this.tankWidth,
-        canvasHeight: this.tankHeight,
+        canvasWidth: this.width,
+        canvasHeight: this.height,
         canvasX: this.dx,
         canvasY: this.dy
       });
@@ -133,50 +133,50 @@ export default class Tank {
       for (const tank of this.renderer.tanks) {
         if (tank.id !== this.id) {
           if (direction === 'up') {
-            if (this.dy === tank.dy + tank.tankHeight + 1) {
+            if (this.dy === tank.dy + tank.height + 1) {
               if (this.dx === tank.dx || (this.dx > tank.dx &&
-                this.dx < tank.dx + tank.tankWidth) ||
-                (this.dx + this.tankWidth > tank.dx &&
-                  this.dx + this.tankWidth < tank.dx + tank.tankWidth)
+                this.dx < tank.dx + tank.width) ||
+                (this.dx + this.width > tank.dx &&
+                  this.dx + this.width < tank.dx + tank.width)
                 ) {
                 collidesWithTank = true;
                 break;
               }
             }
           } else if (direction === 'down') {
-            if (this.dy + tank.tankHeight > tank.dy - 1) {
+            if (this.dy + tank.height > tank.dy - 1) {
               if (
                 this.dx === tank.dx ||
                 (this.dx > tank.dx &&
-                  this.dx < tank.dx + tank.tankWidth) ||
-                  (this.dx + this.tankWidth > tank.dx &&
-                    this.dx + this.tankWidth < tank.dx + tank.tankWidth)  
+                  this.dx < tank.dx + tank.width) ||
+                  (this.dx + this.width > tank.dx &&
+                    this.dx + this.width < tank.dx + tank.width)  
               ) {
                 collidesWithTank = true;
                 break;
               }
             }
           } else if (direction === 'left') {
-            if (this.dx === tank.dx + tank.tankWidth + 1) {
+            if (this.dx === tank.dx + tank.width + 1) {
               if (
                 this.dy === tank.dy ||
                 (this.dy > tank.dy &&
-                  this.dy < tank.dy + tank.tankHeight) ||
-                (this.dy + this.tankHeight > tank.dy &&
-                  this.dy + this.tankHeight < tank.dy + tank.tankHeight)
+                  this.dy < tank.dy + tank.height) ||
+                (this.dy + this.height > tank.dy &&
+                  this.dy + this.height < tank.dy + tank.height)
               ) {
                 collidesWithTank = true; 
                 break;
               }
             }
           } else if (direction === 'right') {
-            if (this.dx + this.tankWidth === tank.dx - 1) {
+            if (this.dx + this.width === tank.dx - 1) {
               if (
                 this.dy === tank.dy ||
                 (this.dy > tank.dy &&
-                  this.dy < tank.dy + tank.tankHeight) ||
-                (this.dy + this.tankHeight > tank.dy &&
-                  this.dy + this.tankHeight < tank.dy + tank.tankHeight)
+                  this.dy < tank.dy + tank.height) ||
+                (this.dy + this.height > tank.dy &&
+                  this.dy + this.height < tank.dy + tank.height)
               ) {
                 collidesWithTank = true; 
                 break;
@@ -198,7 +198,7 @@ export default class Tank {
     if (direction === 'up') {
       const LookupY = Math.floor(this.dy / 32);
       const LookupXLeft = Math.floor((this.dx + 1) / 32);
-      const LookupXRight = Math.floor((this.dx + this.tankWidth - 1) / 32);
+      const LookupXRight = Math.floor((this.dx + this.width - 1) / 32);
       
       if (matrix[LookupY][LookupXLeft] instanceof Obstacle) {
         maybeObstacles.push(matrix[LookupY][LookupXLeft]);
@@ -212,9 +212,9 @@ export default class Tank {
         }
       }
     } else if (direction === 'down') {
-      const LookupY = Math.floor((this.dy + this.tankHeight) / 32);
+      const LookupY = Math.floor((this.dy + this.height) / 32);
       const LookupXLeft = Math.floor((this.dx + 1) / 32);
-      const LookupXRight = Math.floor((this.dx + this.tankWidth - 1) / 32);
+      const LookupXRight = Math.floor((this.dx + this.width - 1) / 32);
 
       if (matrix[LookupY][LookupXLeft] instanceof Obstacle) {
         maybeObstacles.push(matrix[LookupY][LookupXLeft]);
@@ -230,7 +230,7 @@ export default class Tank {
     } else if (direction === 'left') {
       const lookupX = Math.floor(this.dx / 32);
       const lookupYUp = Math.floor((this.dy + 1) / 32);
-      const lookupYDown = Math.floor((this.dy + this.tankHeight - 1) / 32);
+      const lookupYDown = Math.floor((this.dy + this.height - 1) / 32);
 
       if (matrix[lookupYUp][lookupX] instanceof Obstacle) {
         maybeObstacles.push(matrix[lookupYUp][lookupX]);
@@ -244,9 +244,9 @@ export default class Tank {
         }
       }
     } else if (direction === 'right') {
-      const lookupX = Math.floor((this.dx + this.tankWidth) / 32);
+      const lookupX = Math.floor((this.dx + this.width) / 32);
       const lookupYUp = Math.floor((this.dy + 1) / 32);
-      const lookupYDown = Math.floor((this.dy + this.tankHeight - 1) / 32);
+      const lookupYDown = Math.floor((this.dy + this.height - 1) / 32);
 
       if (matrix[lookupYUp][lookupX] instanceof Obstacle) {
         maybeObstacles.push(matrix[lookupYUp][lookupX]);

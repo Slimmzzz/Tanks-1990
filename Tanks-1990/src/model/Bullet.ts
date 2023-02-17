@@ -21,8 +21,8 @@ export class Bullet {
   spriteY = 370
   spriteWidth: number = 25
   spriteHeight: number = 20
-  bulletWidth: number = 25
-  bulletHeight: number = 25
+  width: number = 25
+  height: number = 25
   timeoutID: number = 0
   isAlive: boolean = true
   speed: number = 2.5
@@ -51,8 +51,8 @@ export class Bullet {
         spriteY: this.spriteY,
         spriteWidth: this.spriteWidth,
         spriteHeight: this.spriteHeight,
-        canvasWidth: this.bulletWidth,
-        canvasHeight: this.bulletHeight,
+        canvasWidth: this.width,
+        canvasHeight: this.height,
         canvasX: this.dx,
         canvasY: this.dy,
       })
@@ -168,8 +168,8 @@ export class Bullet {
           spriteCounter++
           this.spriteX = spriteExplosionX1
           this.spriteY = spriteExplosionY
-          this.bulletWidth = 50
-          this.bulletHeight = 50
+          this.width = 50
+          this.height = 50
           this.spriteWidth = 68
           this.spriteHeight = 68
           this.dx -= 20
@@ -179,8 +179,8 @@ export class Bullet {
           spriteCounter++
           this.spriteX = spriteExplosionX2
           this.spriteY = spriteExplosionY
-          this.bulletWidth = 50
-          this.bulletHeight = 50
+          this.width = 50
+          this.height = 50
           this.spriteWidth = 68
           this.spriteHeight = 68
         }
@@ -188,8 +188,8 @@ export class Bullet {
           spriteCounter++
           this.spriteX = spriteExplosionX3
           this.spriteY = spriteExplosionY
-          this.bulletWidth = 50
-          this.bulletHeight = 50
+          this.width = 50
+          this.height = 50
           this.spriteWidth = 68
           this.spriteHeight = 68
           this.timeoutID = 0

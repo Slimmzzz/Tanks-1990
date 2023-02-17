@@ -63,8 +63,8 @@ export default function enemyBehaviour(tank: Tank) {
       let fakeTank = {
         dx: tank.dx,
         dy: tank.dy,
-        tankWidth: tank.tankWidth,
-        tankHeight: tank.tankHeight,
+        width: tank.width,
+        height: tank.height,
         renderer: tank.renderer
       };
       let metObstacleOnWay = false;
