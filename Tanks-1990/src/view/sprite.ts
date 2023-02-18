@@ -39,7 +39,11 @@ export const spriteMap = {
       w1: {x: 1084, y: 320},
       w2: {x: 1116, y: 320},
       w3: {x: 1052, y: 320}
-    }
+    },
+    b_hitFromRight: {x: 1084, y: 256},
+    b_hitFromLeft: {x: 1148, y: 256},
+    b_hitFromDown: {x: 1116, y: 256},
+    b_hitFromUp: {x: 1180, y: 256},
   },
   bullet: {
     up: {x: 1320, y: 408},
