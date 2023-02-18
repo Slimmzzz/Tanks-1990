@@ -51,3 +51,4 @@ export interface Coords {
 // TYPES
 export type LevelMapEntity = string[];
 export type direction = 'left' | 'right' | 'up' | 'down';
+export type dynamicObjectsKey = 'tanks' | 'bullets';

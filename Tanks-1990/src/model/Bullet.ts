@@ -9,7 +9,7 @@ import { Obstacle } from "./sampleObstacle.ts";
 // @ts-ignore
 import Tank from './sampleTank.ts';
 // @ts-ignore
-import { collidesWithCanvasBoundaries, FakeCreature } from './helpers.ts';
+import * as Helpers from './helpers.ts';
 
 interface BulletOptions {
   id: number
@@ -73,42 +73,59 @@ export class Bullet {
 
   getShootDirection(direction: string) {
     if (direction == 'up') {
-      ;(this.dx += 20), (this.dy -= 35)
+      (this.dx += (this.tank.width / 2) - (this.width / 4)), (this.dy = this.tank.dy - this.height)
       this.spriteX = spriteMap.bullet.up.x
       this.spriteY = spriteMap.bullet.up.y
     }
     if (direction == 'down') {
-      ;(this.dx += 20), (this.dy += 15)
-      this.spriteX = spriteMap.bullet.down.x
-      this.spriteY = spriteMap.bullet.down.y
+      this.dx += (this.tank.width / 2) - (this.width / 4);
+      this.dy += this.tank.height;
+      this.spriteX = spriteMap.bullet.down.x;
+      this.spriteY = spriteMap.bullet.down.y;
     }
     if (direction == 'left') {
-      ;(this.dx = this.dx), (this.dy += 20)
-      this.spriteX = spriteMap.bullet.left.x
-      this.spriteY = spriteMap.bullet.left.y
+      this.dx = this.tank.dx - this.width;
+      this.dy = (this.tank.height / 2) + this.tank.dy - (this.height / 4);
+      this.spriteX = spriteMap.bullet.left.x;
+      this.spriteY = spriteMap.bullet.left.y;
     }
     if (direction == 'right') {
-      ;(this.dx += 50), (this.dy += 17)
-      this.spriteX = spriteMap.bullet.right.x
-      this.spriteY = spriteMap.bullet.right.y
+      this.dx = this.tank.dx + this.tank.width;
+      this.dy = (this.tank.height / 2) - (this.height / 4) + this.tank.dy;
+      this.spriteX = spriteMap.bullet.right.x;
+      this.spriteY = spriteMap.bullet.right.y;
     }
   }
 
   checkForObstacle(direction: direction) {
     // Check for canvas boundries
-    if (collidesWithCanvasBoundaries(this, direction)) {
-      console.log('Here');
+    if (Helpers.collidesWithCanvasBoundaries(this, direction)) {
       this.bulletFly = false;
       return;
     }
+    
+    // Check collisions for obstacles
+    let maybeObstacles = Helpers.collidesWithObstacles(this, direction);
+    if (Array.isArray(maybeObstacles) && maybeObstacles.length) {
+      for (const obstacle of maybeObstacles) {
+        if (!obstacle.canShootThrough) {
+          this.bulletFly = false;
+          if (obstacle.type === 'b') {
+            obstacle.isHitFrom[direction] = true;
+            obstacle.modify(direction);
+          }
+        }
+      }
+      return;
+    }
 
-    const obstacleMap = this.renderer.obstacleCoordsMatrix;
-    const LookupY = Math.floor((this.dy + this.height) / 32);
-    const LookupXLeft = Math.floor((this.dx + 1) / 32);
-    const LookupXRight = Math.floor((this.dx + this.width - 1) / 32);
-    if(obstacleMap[LookupY][LookupXLeft] != null){
-      this.bulletFly = false
-      this.explosion()
+    // Check collisions with tanks
+    let maybeTank = Helpers.collidesWithDynamicObject(this, direction, 'tanks');
+    if (maybeTank) {
+      this.bulletFly = false;
+      if (this.tank.isEnemy !== maybeTank.isEnemy) {
+        maybeTank.die()
+      }
     }
   }
   
@@ -129,7 +146,7 @@ export class Bullet {
           this.checkForObstacle(direction)
           this.dx += this.speed
           if(this.bulletFly == false){
-            this.destroy(false)
+            this.destroy()
           }
         }, 16)
         break

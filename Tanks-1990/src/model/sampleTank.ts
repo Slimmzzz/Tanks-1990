@@ -13,7 +13,7 @@ import { Bullet } from "./Bullet.ts";
 // @ts-ignore
 import enemyBehaviour from './ai.ts';
 // @ts-ignore
-import { collidesWithCanvasBoundaries } from "./helpers.ts";
+import { collidesWithCanvasBoundaries, collidesWithObstacles } from "./helpers.ts";
 
 
 export default class Tank {
@@ -150,7 +150,7 @@ export default class Tank {
               }
             }
           } else if (direction === 'down') {
-            if (this.dy + tank.height > tank.dy - 1) {
+            if (this.dy + this.height === tank.dy - 1) {
               if (
                 this.dx === tank.dx ||
                 (this.dx > tank.dx &&
