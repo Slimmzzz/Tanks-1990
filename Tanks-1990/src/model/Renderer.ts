@@ -1,5 +1,4 @@
-// @ts-ignore
-import { DrawOptions } from "../interfaces.ts"
+import { Coords, DrawOptions } from "../interfaces";
 // @ts-ignore
 import sprite from "../view/sprite.ts"
 import { Bullet } from "./Bullet";
@@ -19,6 +18,7 @@ export default class Renderer {
   tanks: Tank[] = []
   bullets: Bullet[] = []
   bulletNextID: number = 1
+  obstacleCoordsMatrix: Obstacle[][] = [];
   
   constructor(root: HTMLDivElement) {
     this.canvas = root.appendChild(document.createElement('canvas'));
