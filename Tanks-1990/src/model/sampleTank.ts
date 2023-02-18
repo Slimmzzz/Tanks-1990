@@ -288,13 +288,6 @@ export default class Tank {
 
 
   shoot() {
-    // if(this.reload === false){
-    //   this.reload = true
-    //   setTimeout(() => {
-    //     this.reload = false
-    //   }, 1000);
-       
-    // }
     if (!this.hasActiveBullet) {
       new Bullet({
         id: this.renderer.nextBulletID,
@@ -304,6 +297,23 @@ export default class Tank {
       this.hasActiveBullet = true;
       this.renderer.nextBulletID += 1;
     }
+  }
+
+  die() {
+    // TODO explosion animation
+    // TODO передать в игру очки за убитый танк
+    this.destroy();
+  }
+
+  destroy() {
+    clearTimeout(this.moveAiTimeout);
+    this.stop();
+    clearTimeout(this.shootAiTimeout);
+    clearTimeout(this.timeoutID);
+    const tankIndex = this.renderer.tanks.findIndex((tank: Tank) => {
+      return tank.id === this.id;
+    });
+    this.renderer.tanks.splice(tankIndex, 1);
   }
 
   private initKeyController() {
