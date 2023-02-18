@@ -199,75 +199,9 @@ export default class Tank {
     
     // Collision with obstacles
 
-    let maybeObstacles = [];
-    const matrix = this.renderer.obstacleCoordsMatrix;
-    if (direction === 'up') {
-      const LookupY = Math.floor(this.dy / 32);
-      const LookupXLeft = Math.floor((this.dx + 1) / 32);
-      const LookupXRight = Math.floor((this.dx + this.width - 1) / 32);
-      
-      if (matrix[LookupY][LookupXLeft] instanceof Obstacle) {
-        maybeObstacles.push(matrix[LookupY][LookupXLeft]);
-      }
-      if (matrix[LookupY][LookupXRight] instanceof Obstacle) {
-        maybeObstacles.push(matrix[LookupY][LookupXRight]);
-      }
-      if (LookupXRight - LookupXLeft > 1) {
-        if (matrix[LookupY][LookupXLeft + 1] instanceof Obstacle) {
-          maybeObstacles.push(matrix[LookupY][LookupXLeft + 1]);
-        }
-      }
-    } else if (direction === 'down') {
-      const LookupY = Math.floor((this.dy + this.height) / 32);
-      const LookupXLeft = Math.floor((this.dx + 1) / 32);
-      const LookupXRight = Math.floor((this.dx + this.width - 1) / 32);
-
-      if (matrix[LookupY][LookupXLeft] instanceof Obstacle) {
-        maybeObstacles.push(matrix[LookupY][LookupXLeft]);
-      }
-      if (matrix[LookupY][LookupXRight] instanceof Obstacle) {
-        maybeObstacles.push(matrix[LookupY][LookupXRight]);
-      }
-      if (LookupXRight - LookupXLeft > 1) {
-        if (matrix[LookupY][LookupXLeft + 1] instanceof Obstacle) {
-          maybeObstacles.push(matrix[LookupY][LookupXLeft + 1]);
-        }
-      }
-    } else if (direction === 'left') {
-      const lookupX = Math.floor(this.dx / 32);
-      const lookupYUp = Math.floor((this.dy + 1) / 32);
-      const lookupYDown = Math.floor((this.dy + this.height - 1) / 32);
-
-      if (matrix[lookupYUp][lookupX] instanceof Obstacle) {
-        maybeObstacles.push(matrix[lookupYUp][lookupX]);
-      }
-      if (matrix[lookupYDown][lookupX] instanceof Obstacle) {
-        maybeObstacles.push(matrix[lookupYDown][lookupX]);
-      }
-      if (lookupYDown - lookupYUp > 1) {
-        if (matrix[lookupYUp + 1][lookupX] instanceof Obstacle) {
-          maybeObstacles.push(matrix[lookupYUp + 1][lookupX]);
-        }
-      }
-    } else if (direction === 'right') {
-      const lookupX = Math.floor((this.dx + this.width) / 32);
-      const lookupYUp = Math.floor((this.dy + 1) / 32);
-      const lookupYDown = Math.floor((this.dy + this.height - 1) / 32);
-
-      if (matrix[lookupYUp][lookupX] instanceof Obstacle) {
-        maybeObstacles.push(matrix[lookupYUp][lookupX]);
-      }
-      if (matrix[lookupYDown][lookupX] instanceof Obstacle) {
-        maybeObstacles.push(matrix[lookupYDown][lookupX]);
-      }
-      if (lookupYDown - lookupYUp > 1) {
-        if (matrix[lookupYUp + 1][lookupX] instanceof Obstacle) {
-          maybeObstacles.push(matrix[lookupYUp + 1][lookupX]);
-        }
-      }
-    }
+    let maybeObstacles = collidesWithObstacles(this, direction);
     
-    if (maybeObstacles.length) {
+    if (Array.isArray(maybeObstacles) && maybeObstacles.length) {
       if (maybeObstacles.some(obstacle => !obstacle.canPassThrough)) {
         return false;
       }
