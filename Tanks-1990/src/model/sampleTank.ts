@@ -57,6 +57,8 @@ export default class Tank {
   }
   reload: boolean = false
   hasActiveBullet: boolean = false
+  shootAiTimeout: number = 0
+  moveAiTimeout: number = 0
 
 
   constructor(tankOptions: TankOptions, renderer: Renderer) {
@@ -94,6 +96,11 @@ export default class Tank {
     if (this.isEnemy) {
       if (!tankOptions.ignoreAIBehaviour) {
         this.initEnemyBehavior();
+        const shootAiCallback = () => {
+          this.shoot();
+          this.shootAiTimeout = setTimeout(shootAiCallback, 1000);
+        }
+        shootAiCallback();
       }
     } else {
       Object.defineProperty(window, '_tank', {

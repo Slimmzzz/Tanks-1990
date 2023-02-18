@@ -143,7 +143,7 @@ export default function enemyBehaviour(tank: Tank) {
     // }
     
     tank.move(tank.direction);
-    tank._aiTimeout = setTimeout(moveCallback, 16);
+    tank.moveAiTimeout = setTimeout(moveCallback, 16);
   }
-  tank._aiTimeout = setTimeout(moveCallback, 16);
+  tank.moveAiTimeout = setTimeout(moveCallback, 16);
 }
