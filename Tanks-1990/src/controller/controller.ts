@@ -1,6 +1,21 @@
 // @ts-ignore
 import Game from "./Game.ts";
 
+
+import {
+  onTankMoveKeyPressFactory,
+  onTankMoveKeyUpFactory
+  // @ts-ignore
+} from './eventListeners.ts';
+// @ts-ignore
+import { KeyController, KeyCallbackMap } from "./KeyController.ts";
+// @ts-ignore
+import { direction } from '../interfaces.ts';
+// @ts-ignore
+import { spriteMap } from '../view/sprite.ts';
+// @ts-ignore
+import { renderMenu } from "../model/Scene/menu/mainMenu.ts";
+
 export const Globals = {
   isGameOver: true,
   currentLevel: 1,
@@ -27,15 +42,18 @@ export const Globals = {
 Globals.audio.level.volume = 0.6;
 Globals.audio.level.loop = true;
 
+
 export default function main() {
   new Game();
 }
 
 /* export default function main() {
   const canvasRoot = document.createElement('div');
-  canvasRoot.setAttribute('style', 'width: max-content; margin: auto; position: relative');
+  canvasRoot.setAttribute('style', 'width: max-content; margin-left: auto; position: relative');
   document.body.appendChild(canvasRoot);
-
+//   let tank = document.querySelector('.tankImg') as HTMLImageElement
+//   window.addEventListener('keydown', function(e){
+// console.log(e)})
   // Debug table start
   // const debugTable = canvasRoot.appendChild(document.createElement('table'));
   // debugTable.appendChild(document.createElement('tbody'));
