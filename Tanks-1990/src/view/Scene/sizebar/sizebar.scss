@@ -1,7 +1,7 @@
 .bar {
-  width: 35px;
+  width: 80px;
   height: 834px;
-  background-color: grey;
+  background-color: #636363;
   padding-left: 25px;
   padding-right: 25px;
   margin-right: auto;
@@ -10,8 +10,9 @@
 .enemy{
   display: flex;
   flex-wrap: wrap;
-  width: 32px;
-  margin-top: 100px;
+  width: 65px;
+  margin-top: 60px;
+  height: 320px;
 }
 
 .lives{

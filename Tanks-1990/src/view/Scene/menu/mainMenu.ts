@@ -3,10 +3,10 @@ import "./menu.scss";
 
 const menu = `
 <div class='wrapper'>
-<img class='titleImg' src='/src/model/Scene/img/battle_city.png'>
+<img class='titleImg' src='/src/view/Scene/img/battle_city.png'>
 <div class='menuWrapper'>
 <div class='tank'>
-<img class='tankImg' src='/src/model/Scene/img/tank.png'>
+<img class='tankImg' src='/src/view/Scene/img/tank.png'>
 </div>
 <div>
 <p class='start'>START</p>

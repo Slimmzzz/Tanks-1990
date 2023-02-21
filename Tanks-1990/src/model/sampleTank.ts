@@ -15,7 +15,7 @@ import enemyBehaviour from './ai.ts';
 // @ts-ignore
 import { collidesWithCanvasBoundaries, collidesWithObstacles } from "./helpers.ts";
 // @ts-ignore
-import { Globals } from '../controller/controller.ts';
+import { Globals } from '../app.ts';
 
 
 export default class Tank {
@@ -329,11 +329,40 @@ export default class Tank {
     if (this.isEnemy) {
       this.renderer.game.spawnTankTimeout = setTimeout(this.renderer.game.spawnTankCallback, 80);
       this.renderer.game.score += this.killScore;
-      document.dispatchEvent(new CustomEvent('update-score'));
+      this.renderer.game.enemiesKilledByScore[`${this.killScore}`] += 1;
+      document.dispatchEvent(new CustomEvent('ui:update-score', {
+        /*
+          TODO
+        */
+        detail: {
+          score: this.renderer.game.score
+        }
+      }));
+      this.renderer.game.enemiesToGo -= 1;
+      document.dispatchEvent(new CustomEvent('ui:remove-enemy-tank', {
+        /**
+         * TODO
+         */
+        detail: {
+          tanks: this.renderer.game.enemiesToGo
+        }
+      }));
+      if (!this.renderer.game.enemiesToGo) {
+        document.dispatchEvent(new CustomEvent('ui:complete-level', {
+          detail: {
+            score: this.renderer.game.score,
+            enemiesKilledByScore: this.renderer.game.enemiesKilledByScore
+          }
+        }))
+      }
     } else {
       this.renderer.game.playerLives -= 1;
       if (this.renderer.game.playerLives !== 0) {
-        
+        document.dispatchEvent(new CustomEvent('ui:update-health', {
+          detail: {
+            health: this.renderer.game.playerLives
+          }
+        }))
         this.renderer.tanks.push(new Tank({
           id: 1,
           x: 263,
@@ -344,6 +373,17 @@ export default class Tank {
         }, this.renderer));
       } else {
         Globals.isGameOver = true;
+        document.dispatchEvent(new CustomEvent('ui:update-health', {
+          detail: {
+            health: this.renderer.game.playerLives
+          }
+        }));
+        document.dispatchEvent(new CustomEvent('ui:game-over', {
+          detail: {
+            score: this.renderer.game.score,
+            enemiesKilledByScore: this.renderer.game.enemiesKilledByScore
+          }
+        }))
       }
     }
   }
