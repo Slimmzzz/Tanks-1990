@@ -18,12 +18,16 @@ import { KeyController, KeyCallbackMap } from "./KeyController.ts";
 import { direction } from '../interfaces.ts';
 // @ts-ignore
 import { spriteMap } from '../view/sprite.ts';
+// @ts-ignore
+import { renderMenu } from "../model/Scene/menu/mainMenu.ts";
 
 export default function main() {
   const canvasRoot = document.createElement('div');
-  canvasRoot.setAttribute('style', 'width: max-content; margin: auto; position: relative');
+  canvasRoot.setAttribute('style', 'width: max-content; margin-left: auto; position: relative');
   document.body.appendChild(canvasRoot);
-
+//   let tank = document.querySelector('.tankImg') as HTMLImageElement
+//   window.addEventListener('keydown', function(e){
+// console.log(e)})
   // Debug table start
   // const debugTable = canvasRoot.appendChild(document.createElement('table'));
   // debugTable.appendChild(document.createElement('tbody'));

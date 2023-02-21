@@ -1,0 +1,59 @@
+.bar {
+  width: 35px;
+  height: 834px;
+  background-color: grey;
+  padding-left: 25px;
+  padding-right: 25px;
+  margin-right: auto;
+}
+
+.enemy{
+  display: flex;
+  flex-wrap: wrap;
+  width: 32px;
+  margin-top: 100px;
+}
+
+.lives{
+  margin-top: 155px;
+}
+
+.player{
+  font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+}
+
+.playerLives{
+  display: flex;
+}
+
+.health{
+  align-self: start;
+  width: 25px;
+  height: 25px;
+}
+
+.healthCounter{
+font-family: 'Common Pixel', sans-serif;
+font-size: 25px;
+margin: 0;
+}
+
+.stage{
+  display: flex;
+  margin-top: 150px;
+}
+
+.flag {
+    width: 30px;
+    height: 55px;
+}
+
+.stageCounter{
+font-family: 'Common Pixel', sans-serif;
+font-size: 25px;
+margin: 0;
+align-self: self-end;
+}
