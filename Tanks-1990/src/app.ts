@@ -39,4 +39,3 @@ if(e.keyCode == 70){
 removeHealth()
 }
   })
-
