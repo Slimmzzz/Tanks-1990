@@ -29,11 +29,14 @@ export interface TankOptions {
   y: number
   startDirection: string
   isEnemy: boolean
+  hp?: number
+  killScore?: number
   tankType?: string
   tankColor?: string
   tankModelWidth?: number
   tankModelHeight?: number
   ignoreAIBehaviour?: boolean
+  speed?: number
 };
 
 export interface TankBlockedMoves {
@@ -51,3 +54,4 @@ export interface Coords {
 // TYPES
 export type LevelMapEntity = string[];
 export type direction = 'left' | 'right' | 'up' | 'down';
+export type dynamicObjectsKey = 'tanks' | 'bullets';

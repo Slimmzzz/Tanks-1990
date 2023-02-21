@@ -1,5 +1,5 @@
 // @ts-ignore
-import { ObstacleOptions, LevelMapEntity } from "../interfaces.ts";
+import { ObstacleOptions, LevelMapEntity, direction } from "../interfaces.ts";
 // @ts-ignore
 import { spriteMap } from "../view/sprite.ts";
 // @ts-ignore
@@ -7,6 +7,12 @@ import Renderer from "./Renderer.ts";
 // @ts-ignore
 import { Coords } from "./sampleTank.ts";
 
+interface IsHitFrom {
+  left: boolean
+  right: boolean
+  up: boolean
+  down: boolean
+}
 
 export class Obstacle {
   renderer: Renderer
@@ -23,11 +29,22 @@ export class Obstacle {
   spriteY: number = 0
   _pingRendererTimeoutCallback: () => void
   timeoutID: number = 0
+  isHitFrom: IsHitFrom = {
+    left: false,
+    right: false,
+    up: false,
+    down: false
+  }
+  hits: number = 0
+  xInMatrix: number = 0
+  yInMatrix: number = 0
 
   constructor(obstacleOptions: ObstacleOptions, renderer: Renderer) {
     this.renderer = renderer;
     this.x = obstacleOptions.x * 32;
     this.y = obstacleOptions.y * 32;
+    this.xInMatrix = obstacleOptions.x;
+    this.yInMatrix = obstacleOptions.y;
     this.type = obstacleOptions.type;
     switch(this.type) {
       case 'b': // b - brick
@@ -88,9 +105,33 @@ export class Obstacle {
     setTimeout(animationTimeoutCallback, 640);
   };
 
-  collisionBullet() {};
+  modify(direction: direction) {
+    if (direction === 'right') {
+      this.spriteX = spriteMap.obstacles.b_hitFromRight.x;
+      this.spriteY = spriteMap.obstacles.b_hitFromRight.y;
+    }
+    if (direction === 'left') {
+      this.spriteX = spriteMap.obstacles.b_hitFromLeft.x;
+      this.spriteY = spriteMap.obstacles.b_hitFromLeft.y;
+    }
+    if (direction === 'up') {
+      this.spriteX = spriteMap.obstacles.b_hitFromUp.x;
+      this.spriteY = spriteMap.obstacles.b_hitFromUp.y;
+    }
+    if (direction === 'down') {
+      this.spriteX = spriteMap.obstacles.b_hitFromDown.x;
+      this.spriteY = spriteMap.obstacles.b_hitFromDown.y;
+    }
+    this.hits += 1;
+    if (this.hits === 2) {
+      this.destroy()
+    }
+  }
 
-  collisionMove() {};
+  destroy() {
+    clearTimeout(this.timeoutID);
+    this.renderer.obstacleCoordsMatrix[this.yInMatrix].splice(this.xInMatrix, 1, null);
+  }
 }
 
 export class ObstacleCollection {

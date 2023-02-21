@@ -1,31 +1,36 @@
-// @ts-ignore
-import { DrawOptions } from "../interfaces.ts"
+import { Coords, DrawOptions } from "../interfaces";
 // @ts-ignore
 import sprite from "../view/sprite.ts"
+import { Bullet } from "./Bullet";
 // @ts-ignore
 import { Obstacle } from "./sampleObstacle.ts"
 // @ts-ignore
 import Tank from './sampleTank.ts';
+import Game from '../controller/Game';
 
 
 export default class Renderer {
   canvas: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
+  style: string = 'border: 1px solid #000; background: #000;'
   drawStack: DrawOptions[] = []
-  tiomeoutID: number | undefined
+  timeoutID: number | undefined
   isActive: boolean = false
   obstacles: Obstacle[] = []
   tanks: Tank[] = []
-  
-  constructor(root: HTMLDivElement) {
+  bullets: Bullet[] = []
+  bulletNextID: number = 1
+  obstacleCoordsMatrix: Obstacle[][] = [];
+  game: Game | undefined = undefined
+
+  constructor(root: HTMLDivElement, style?: string) {
     this.canvas = root.appendChild(document.createElement('canvas'));
-    this.canvas.classList.add('canvas')
+    this.canvas.classList.add('canvas');
+    this.canvas.setAttribute('style', style || this.style);
     this.canvas.width = this.canvas.height = 832;
-    this.canvas.style.border = '1px solid #000';
-    this.canvas.style.background = "#000";
     this.ctx = this.canvas.getContext('2d')!;
     this.isActive = true;
-    this.tiomeoutID = setTimeout(this.render.bind(this), 16);
+    this.timeoutID = setTimeout(this.render.bind(this), 16);
   }
 
   add(drawOptions: DrawOptions) {
@@ -55,7 +60,7 @@ export default class Renderer {
     }
     this.drawStack = [];
     if (this.isActive) {
-      this.tiomeoutID = setTimeout(this.render.bind(this), 16);
+      this.timeoutID = setTimeout(this.render.bind(this), 16);
     }
   }
 
@@ -64,8 +69,8 @@ export default class Renderer {
   }
 
   destroy() {
-    if (this.tiomeoutID) {
-      clearTimeout(this.tiomeoutID);
+    if (this.timeoutID) {
+      clearTimeout(this.timeoutID);
     }
     this.isActive = false;
     this.canvas.remove();

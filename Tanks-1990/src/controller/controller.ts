@@ -1,25 +1,37 @@
 // @ts-ignore
-import Renderer from "../model/Renderer.ts";
-// @ts-ignore
-import { ObstacleCollection } from "../model/sampleObstacle.ts";
-// @ts-ignore
-import Tank from "../model/sampleTank.ts";
-// @ts-ignore
-import levels from "../view/levels.ts";
+import Game from "./Game.ts";
 
-import {
-  onTankMoveKeyPressFactory,
-  onTankMoveKeyUpFactory
-  // @ts-ignore
-} from './eventListeners.ts';
-// @ts-ignore
-import { KeyController, KeyCallbackMap } from "./KeyController.ts";
-// @ts-ignore
-import { direction } from '../interfaces.ts';
-// @ts-ignore
-import { spriteMap } from '../view/sprite.ts';
+export const Globals = {
+  isGameOver: true,
+  currentLevel: 1,
+  scoreLevel: 0,
+  scoreGame: 0,
+  highScore: Number(window.localStorage.getItem('highScore')) || 20000,
+  activeView: {
+    startScreen: true,
+    stageScreen: false,
+    statsScreen: false,
+  },
+  audio: {
+    gameStart: new Audio('/public/sounds/start-level.mp3'),
+    gameOver: new Audio('/public/sounds/game-over.mp3'),
+    hitBorder: new Audio('/public/sounds/hitting-the-border-map.mp3'),
+    hitEagle: new Audio('/public/sounds/hitting-the-eagle.mp3'),
+    level: new Audio('/public/sounds/level.mp3'),
+    takeBonus: new Audio('/public/sounds/open-bonus.mp3'),
+    pause: new Audio('/public/sounds/pause-level.mp3'),
+    shot: new Audio('/public/sounds/shot.mp3'),
+    tankDamage: new Audio('/public/sounds/tank-damage.mp3'),
+  }
+}
+Globals.audio.level.volume = 0.6;
+Globals.audio.level.loop = true;
 
 export default function main() {
+  new Game();
+}
+
+/* export default function main() {
   const canvasRoot = document.createElement('div');
   canvasRoot.setAttribute('style', 'width: max-content; margin: auto; position: relative');
   document.body.appendChild(canvasRoot);
@@ -43,11 +55,7 @@ export default function main() {
   // Debug table end
 
   const renderer = new Renderer(canvasRoot);
-  Object.defineProperty(window, '_renderer', { 
-    value: renderer,
-    enumerable: true,
-    configurable: true,
-  });
+  
 
   const testTank = new Tank({
     id: 1,
@@ -100,12 +108,9 @@ export default function main() {
 
   const obstacleCollection = new ObstacleCollection(renderer, levels['4']);
 
-  Object.defineProperty(window, '_obstacleCollection', { 
-    value: obstacleCollection,
-    enumerable: true,
-    configurable: true,
-  });
-}
+} 
+
+*/
 
 //   let shoot: string = testTank.startDirection
 //   function getshootDirection(direction: string) {
