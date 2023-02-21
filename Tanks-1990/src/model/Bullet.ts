@@ -10,6 +10,8 @@ import { Obstacle } from "./sampleObstacle.ts";
 import Tank from './sampleTank.ts';
 // @ts-ignore
 import * as Helpers from './helpers.ts';
+// @ts-ignore
+import { Globals } from '../controller/controller.ts';
 
 interface BulletOptions {
   id: number
@@ -101,6 +103,10 @@ export class Bullet {
     // Check for canvas boundries
     if (Helpers.collidesWithCanvasBoundaries(this, direction)) {
       this.bulletFly = false;
+      if (this.tank.id === 1) {
+        Globals.audio.hitBorder.currentTime = 0;
+        Globals.audio.hitBorder.play();
+      }
       return;
     }
     
@@ -124,7 +130,12 @@ export class Bullet {
     if (maybeTank) {
       this.bulletFly = false;
       if (this.tank.isEnemy !== maybeTank.isEnemy) {
-        maybeTank.die()
+        Globals.audio.tankDamage.currentTime = 0;
+        Globals.audio.tankDamage.play();
+        maybeTank.hp -= 1;
+        if (!maybeTank.hp) {
+          maybeTank.die();
+        }
       }
     }
   }
@@ -222,5 +233,7 @@ export class Bullet {
       return b.id === this.id;
     });
     this.renderer.bullets.splice(spliceIndex, 1);
+    Globals.audio.shot.pause();
+    Globals.audio.shot.currentTime = 0;
   }
 }

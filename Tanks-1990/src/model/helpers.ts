@@ -76,10 +76,10 @@ export function collidesWithObstacles(creature: FakeCreature, direction: directi
       }
     }
   } else if (direction === 'right') {
+    
     const lookupX = Math.floor((creature.dx + creature.width) / 32);
     const lookupYUp = Math.floor((creature.dy + 1) / 32);
     const lookupYDown = Math.floor((creature.dy + creature.height - 1) / 32);
-
     if (matrix[lookupYUp][lookupX] instanceof Obstacle) {
       maybeObstacles.push(matrix[lookupYUp][lookupX]);
     }

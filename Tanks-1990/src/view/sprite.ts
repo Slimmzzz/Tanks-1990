@@ -20,6 +20,55 @@ export const spriteMap = {
     enemy1: {
       width: 60,
       height: 60,
+      killScore: 100,
+      grey: {
+        up1: {x: 520, y: 264},
+        up2: {x: 584, y: 264},
+        left1: {x: 648, y: 268},
+        left2: {x: 712, y: 268},
+        down1: {x: 776, y: 264},
+        down2: {x: 840, y: 264},
+        right1: {x: 908, y: 260},
+        right2: {x: 972, y: 260},
+      }
+    },
+    enemy2: {
+      width: 60,
+      height: 60,
+      speed: 1.5,
+      killScore: 200,
+      grey: {
+        up1: {x: 520, y: 328},
+        up2: {x: 584, y: 328},
+        left1: {x: 648, y: 332},
+        left2: {x: 712, y: 332},
+        right1: {x: 908, y: 328},
+        right2: {x: 972, y: 328},
+        down1: {x: 776, y: 332},
+        down2: {x: 840, y: 332},
+      }
+    },
+    enemy3: {
+      width: 60,
+      height: 60,
+      killScore: 300,
+      hp: 2,
+      grey: {
+        up1: {x: 520, y: 396},
+        up2: {x: 584, y: 396},
+        left1: {x: 648, y: 400},
+        left2: {x: 712, y: 400},
+        down1: {x: 772, y: 396},
+        down2: {x: 836, y: 396},
+        right1: {x: 908, y: 396},
+        right2: {x: 972, y: 396},
+      }
+    },
+    enemy4: {
+      width: 60,
+      height: 60,
+      killScore: 400,
+      hp: 3,
       grey: {
         up1: {x: 524, y: 198},
         up2: {x: 588, y: 198},

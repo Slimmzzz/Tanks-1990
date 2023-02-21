@@ -14,6 +14,8 @@ import { Bullet } from "./Bullet.ts";
 import enemyBehaviour from './ai.ts';
 // @ts-ignore
 import { collidesWithCanvasBoundaries, collidesWithObstacles } from "./helpers.ts";
+// @ts-ignore
+import { Globals } from '../controller/controller.ts';
 
 
 export default class Tank {
@@ -59,6 +61,9 @@ export default class Tank {
   hasActiveBullet: boolean = false
   shootAiTimeout: number = 0
   moveAiTimeout: number = 0
+  speed: number = 1
+  hp: number = 1
+  killScore: number = 100
 
 
   constructor(tankOptions: TankOptions, renderer: Renderer) {
@@ -69,6 +74,13 @@ export default class Tank {
     this.spriteWidth = tankOptions.tankModelWidth || 52;
     this.spriteHeight = tankOptions.tankModelHeight || 52;
     this.isEnemy = tankOptions.isEnemy;
+    this.speed = tankOptions.speed;
+    if (tankOptions.hp) {
+      this.hp = tankOptions.hp;
+    }
+    if (tankOptions.killScore) {
+      this.killScore = tankOptions.killScore;
+    }
     this.tankModel = spriteMap.tanks[tankOptions.tankType || 'player'][tankOptions.tankColor || 'yellow'];
     this.direction = tankOptions.startDirection as direction;
     switch (this.direction) {
@@ -111,7 +123,7 @@ export default class Tank {
       this.initKeyController();
     }
 
-    this.renderer.tanks.push(this);
+    // this.renderer.tanks.push(this);
   }
 
   initEnemyBehavior() {
@@ -231,25 +243,30 @@ export default class Tank {
   }
 
   move(direction: direction) {
-    for (const key in this.blockedMoves) {
-      if (key !== direction) {
-        this.blockedMoves[key as direction] = false;
+    if (this.isAlive) {
+      for (const key in this.blockedMoves) {
+        if (key !== direction) {
+          this.blockedMoves[key as direction] = false;
+        }
       }
-    }
-
-    const collisionCheckResult = this.checkCollisions(direction);
-    if (!this.blockedMoves[direction]) {
-      this._isMoving = true;
-      this.shiftCallback(direction, collisionCheckResult);
-
-      if (!collisionCheckResult) {
-        this.blockedMoves[direction] = true;
-        this._isMoving = false;
-        return false;
-      }
-    } else {
-      if (collisionCheckResult) {
-        this.blockedMoves[direction] = false;
+  
+      const collisionCheckResult = this.checkCollisions(direction);
+      if (!this.blockedMoves[direction]) {
+        this._isMoving = true;
+        this.shiftCallback(direction, collisionCheckResult);
+        if (!this.isEnemy) {
+          Globals.audio.level.play();
+        }
+  
+        if (!collisionCheckResult) {
+          this.blockedMoves[direction] = true;
+          this._isMoving = false;
+          return false;
+        }
+      } else {
+        if (collisionCheckResult) {
+          this.blockedMoves[direction] = false;
+        }
       }
     }
   }
@@ -258,22 +275,22 @@ export default class Tank {
     this.direction = direction;
     switch (direction) {
       case 'right':
-        collisionCheckResult ? this.dx += 1 : this.dx -= 0;
+        collisionCheckResult ? this.dx += 1 * this.speed : this.dx -= 0;
         this.spriteX = this.spriteX === this.tankModel.right1.x ? this.tankModel.right2.x : this.tankModel.right1.x;
         this.spriteY = this.tankModel.right1.y;
         break;
       case 'left':
-        collisionCheckResult ? this.dx -= 1 : this.dx += 0;
+        collisionCheckResult ? this.dx -= 1 * this.speed : this.dx += 0;
         this.spriteX = this.spriteX === this.tankModel.left1.x ? this.tankModel.left2.x : this.tankModel.left1.x;
         this.spriteY = this.tankModel.left1.y;
         break;
       case 'up':
-        collisionCheckResult ? this.dy -= 1 : this.dy += 0;
+        collisionCheckResult ? this.dy -= 1 * this.speed : this.dy += 0;
         this.spriteX = this.spriteX === this.tankModel.up1.x ? this.tankModel.up2.x : this.tankModel.up1.x;
         this.spriteY = this.tankModel.up1.y;
         break;
       case 'down':
-        collisionCheckResult ? this.dy += 1 : this.dy -= 0;
+        collisionCheckResult ? this.dy += 1 * this.speed : this.dy -= 0;
         this.spriteX = this.spriteX === this.tankModel.down1.x ? this.tankModel.down2.x : this.tankModel.down1.x;
         this.spriteY = this.tankModel.down1.y;
         break;
@@ -282,18 +299,22 @@ export default class Tank {
 
   stop() {
     if (!this._isMoving) {
+      Globals.audio.level.pause();
       clearTimeout(this.moveTimeoutID);
     }
   }
 
 
   shoot() {
-    if (!this.hasActiveBullet) {
+    if (this.isAlive && !this.hasActiveBullet) {
       new Bullet({
         id: this.renderer.nextBulletID,
         x: this.dx, 
         y: this.dy
       }, this.renderer, this).move(this.direction);
+      if (!this.isEnemy) {
+        Globals.audio.shot.play();
+      }
       this.hasActiveBullet = true;
       this.renderer.nextBulletID += 1;
     }
@@ -302,7 +323,29 @@ export default class Tank {
   die() {
     // TODO explosion animation
     // TODO передать в игру очки за убитый танк
+    this.isAlive = false;
     this.destroy();
+    this.dx = this.dy = -80;
+    if (this.isEnemy) {
+      this.renderer.game.spawnTankTimeout = setTimeout(this.renderer.game.spawnTankCallback, 80);
+      this.renderer.game.score += this.killScore;
+      document.dispatchEvent(new CustomEvent('update-score'));
+    } else {
+      this.renderer.game.playerLives -= 1;
+      if (this.renderer.game.playerLives !== 0) {
+        
+        this.renderer.tanks.push(new Tank({
+          id: 1,
+          x: 263,
+          y: 832 - 57,
+          startDirection: 'up',
+          isEnemy: false,
+          speed: 1,
+        }, this.renderer));
+      } else {
+        Globals.isGameOver = true;
+      }
+    }
   }
 
   destroy() {
@@ -314,6 +357,9 @@ export default class Tank {
       return tank.id === this.id;
     });
     this.renderer.tanks.splice(tankIndex, 1);
+    if (!!this.keyboardController) {
+      this.keyboardController.destroy();
+    }
   }
 
   private initKeyController() {

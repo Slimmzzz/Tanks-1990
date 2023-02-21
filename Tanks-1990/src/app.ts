@@ -5,4 +5,5 @@ import main from "./controller/controller.ts";
 import { appendCssSprite } from './view/sprite.ts';
 
 appendCssSprite();
+
 main();
