@@ -101,8 +101,37 @@ export const spriteMap = {
     down: {x: 1384, y: 408},
     left: {x: 1348, y: 408},
     right: {x: 1412, y: 408}
+  },
+  ui: {
+    enemyTank: {
+      x: 1308,
+      y: 768,
+    },
+    flag: {
+      x: 1532,
+      y: 736,
+    },
+    playerTank: {
+      x: 1536,
+      y: 672,
+    }
   }
 };
+
+const cssSprite = [
+  {
+    className: 'enemy-tank',
+    coords: spriteMap.ui.enemyTank,
+  },
+  {
+    className: 'flag',
+    coords: spriteMap.ui.flag,
+  },
+  {
+    className: 'player-tank',
+    coords: spriteMap.ui.playerTank,
+  }
+]
 
 function makeCssRule(coords: Coords) {
   return `background-position: ${coords.x * - 1}px ${coords.y * - 1}px;`;
@@ -114,17 +143,35 @@ export function appendCssSprite() {
     .sprite {
       background-repeat: no-repeat;
       background-image: url('${sprite.src}');
+      display: inline-block;
     }
     .sprite.is-64 {
       width: 64px;
       height: 64px;
     }
+    .sprite.is-32 {
+      width: 32px;
+      height: 32px;
+    }
+    ${cssSprite.reduce((acc: string, item: CssRuleProps) => {
+      acc += `
+        .sprite.${item.className} {
+          ${makeCssRule(item.coords)}
+        }
+      `;
+      return acc;
+    }, '')}
     .sprite.tank-menu {
       ${makeCssRule(spriteMap.tanks.player.yellow.right1)}
     }
   `;
 
   document.head.appendChild(style);
+}
+
+interface CssRuleProps {
+  className: string
+  coords: Coords
 }
 
 export default sprite;

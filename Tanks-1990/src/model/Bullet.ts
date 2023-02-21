@@ -11,7 +11,7 @@ import Tank from './sampleTank.ts';
 // @ts-ignore
 import * as Helpers from './helpers.ts';
 // @ts-ignore
-import { Globals } from '../controller/controller.ts';
+import { Globals } from '../app.ts';
 
 interface BulletOptions {
   id: number

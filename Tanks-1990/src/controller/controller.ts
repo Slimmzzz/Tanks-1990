@@ -16,33 +16,6 @@ import { spriteMap } from '../view/sprite.ts';
 // @ts-ignore
 import { renderMenu } from "../model/Scene/menu/mainMenu.ts";
 
-export const Globals = {
-  isGameOver: true,
-  currentLevel: 1,
-  scoreLevel: 0,
-  scoreGame: 0,
-  highScore: Number(window.localStorage.getItem('highScore')) || 20000,
-  activeView: {
-    startScreen: true,
-    stageScreen: false,
-    statsScreen: false,
-  },
-  audio: {
-    gameStart: new Audio('/public/sounds/start-level.mp3'),
-    gameOver: new Audio('/public/sounds/game-over.mp3'),
-    hitBorder: new Audio('/public/sounds/hitting-the-border-map.mp3'),
-    hitEagle: new Audio('/public/sounds/hitting-the-eagle.mp3'),
-    level: new Audio('/public/sounds/level.mp3'),
-    takeBonus: new Audio('/public/sounds/open-bonus.mp3'),
-    pause: new Audio('/public/sounds/pause-level.mp3'),
-    shot: new Audio('/public/sounds/shot.mp3'),
-    tankDamage: new Audio('/public/sounds/tank-damage.mp3'),
-  }
-}
-Globals.audio.level.volume = 0.6;
-Globals.audio.level.loop = true;
-
-
 export default function main() {
   new Game();
 }

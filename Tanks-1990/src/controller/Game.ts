@@ -1,4 +1,6 @@
 // @ts-ignore
+import { Globals } from '../app.ts';
+// @ts-ignore
 import { LevelMapEntity, Coords } from '../interfaces.ts';
 // @ts-ignore
 import Renderer from "../model/Renderer.ts";
@@ -10,8 +12,6 @@ import Tank from "../model/sampleTank.ts";
 import levels from '../view/levels.ts';
 // @ts-ignore
 import { spriteMap } from '../view/sprite.ts';
-// @ts-ignore
-import { Globals } from './controller.ts';
 // @ts-ignore
 import { onTankMoveKeyUpFactory } from './eventListeners.ts';
 
@@ -31,12 +31,24 @@ export default class Game {
   playerLives: number = 2
   forestInLevel: ObstacleCollection
   score: number = 0
-
+  enemiesToGo: number = 20
+  static enemiesCount: number = 20
+  enemiesKilledByScore: {
+    '100': number
+    '200': number
+    '300': number
+    '400': number
+  } = {
+    '100': 0,
+    '200': 0,
+    '300': 0,
+    '400': 0,
+  }
   
   constructor() {
     Globals.isGameOver = false;
     const canvasRoot = document.createElement('div');
-    canvasRoot.setAttribute('style', 'width: max-content; margin: auto; position: relative');
+    canvasRoot.setAttribute('style', 'width: max-content; margin-left: auto; position: relative');
     document.body.appendChild(canvasRoot);
     this.renderer = new Renderer(canvasRoot);
     this.renderer.game = this;
