@@ -7,7 +7,7 @@ export function gameOver() {
   let gameOverPic = document.createElement('div')
   gameOverPic.classList.add('gameOver')
   gameOverPic.innerHTML = `
-<img class='gameOverImg' src='/src/view/Scene/img/game_over.png'>
+<span class="gameOverImg sprite game-over"></span>
 `
   document.body.appendChild(gameOverPic)
   let gameOverImg = document.querySelector('.gameOverImg') as HTMLElement
