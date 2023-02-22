@@ -20,11 +20,6 @@ export const Globals = {
   scoreLevel: 0,
   scoreGame: 0,
   highScore: Number(window.localStorage.getItem('highScore')) || 20000,
-  activeView: {
-    startScreen: true,
-    stageScreen: false,
-    statsScreen: false,
-  },
   audio: {
     gameStart: new Audio('/public/sounds/start-level.mp3'),
     gameOver: new Audio('/public/sounds/game-over.mp3'),
