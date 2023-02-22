@@ -37,8 +37,11 @@ export const Globals = {
     tankDamage: new Audio('/public/sounds/tank-damage.mp3'),
   }
 }
-Globals.audio.level.volume = 0.6;
+// Globals.audio.level.volume = 0.6;
 Globals.audio.level.loop = true;
+for (const sound of Object.values(Globals.audio)) {
+  sound.volume = 0.1;
+}
 
 Object.defineProperty(window, '_globals', {
   enumerable: true,

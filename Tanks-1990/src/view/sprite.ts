@@ -30,6 +30,26 @@ export const spriteMap = {
         down2: {x: 840, y: 264},
         right1: {x: 908, y: 260},
         right2: {x: 972, y: 260},
+      },
+      green: {
+        up1: {x: 0, y: 788},
+        up2: {x: 64, y: 788},
+        left1: {x: 128, y: 792},
+        left2: {x: 196, y: 792},
+        down1: {x: 260, y: 788},
+        down2: {x: 324, y: 788},
+        right1: {x: 392, y: 788},
+        right2: {x: 460, y: 788},
+      },
+      red: {
+        up1: {x: 520, y: 788},
+        up2: {x: 584, y: 788},
+        left1: {x: 648, y: 792},
+        left2: {x: 712, y: 792},
+        down1: {x: 776, y: 788},
+        down2: {x: 840, y: 788},
+        right1: {x: 908, y: 788},
+        right2: {x: 972, y: 788},
       }
     },
     enemy2: {
@@ -46,7 +66,27 @@ export const spriteMap = {
         right2: {x: 972, y: 328},
         down1: {x: 776, y: 332},
         down2: {x: 840, y: 332},
-      }
+      },
+      green: {
+        up1: {x: 0, y: 852},
+        up2: {x: 64, y: 852},
+        left1: {x: 128, y: 856},
+        left2: {x: 196, y: 856},
+        right1: {x: 392, y: 852},
+        right2: {x: 460, y: 852},
+        down1: {x: 260, y: 856},
+        down2: {x: 324, y: 856},
+      },
+      red: {
+        up1: {x: 520, y: 852},
+        up2: {x: 584, y: 852},
+        left1: {x: 648, y: 856},
+        left2: {x: 712, y: 856},
+        right1: {x: 908, y: 852},
+        right2: {x: 972, y: 852},
+        down1: {x: 776, y: 852},
+        down2: {x: 840, y: 852},
+      },
     },
     enemy3: {
       width: 60,
@@ -62,7 +102,27 @@ export const spriteMap = {
         down2: {x: 836, y: 396},
         right1: {x: 908, y: 396},
         right2: {x: 972, y: 396},
-      }
+      },
+      green: {
+        up1: {x: 0, y: 920},
+        up2: {x: 64, y: 920},
+        left1: {x: 128, y: 924},
+        left2: {x: 196, y: 924},
+        down1: {x: 256, y: 920},
+        down2: {x: 320, y: 920},
+        right1: {x: 392, y: 920},
+        right2: {x: 460, y: 920},
+      },
+      red: {
+        up1: {x: 520, y: 920},
+        up2: {x: 584, y: 920},
+        left1: {x: 648, y: 924},
+        left2: {x: 712, y: 924},
+        down1: {x: 772, y: 920},
+        down2: {x: 836, y: 920},
+        right1: {x: 908, y: 920},
+        right2: {x: 972, y: 920},
+      },
     },
     enemy4: {
       width: 60,
@@ -70,15 +130,35 @@ export const spriteMap = {
       killScore: 400,
       hp: 3,
       grey: {
-        up1: {x: 524, y: 198},
-        up2: {x: 588, y: 198},
-        left1: {x: 648, y: 204},
-        left2: {x: 712, y: 204},
-        right1: {x: 908, y: 204},
-        right2: {x: 972, y: 204},
-        down1: {x: 780, y: 198},
-        down2: {x: 844, y: 198},
-      }
+        up1: {x: 520, y: 460},
+        up2: {x: 584, y: 460},
+        left1: {x: 648, y: 460},
+        left2: {x: 712, y: 460},
+        down1: {x: 776, y: 460},
+        down2: {x: 840, y: 460},
+        right1: {x: 904, y: 460},
+        right2: {x: 968, y: 460},
+      },
+      green: {
+        up1: {x: 0, y: 984},
+        up2: {x: 64, y: 984},
+        left1: {x: 128, y: 984},
+        left2: {x: 196, y: 984},
+        down1: {x: 260, y: 984},
+        down2: {x: 324, y: 984},
+        right1: {x: 388, y: 984},
+        right2: {x: 456, y: 984},
+      },
+      red: {
+        up1: {x: 520, y: 984},
+        up2: {x: 584, y: 984},
+        left1: {x: 648, y: 984},
+        left2: {x: 712, y: 984},
+        down1: {x: 776, y: 984},
+        down2: {x: 840, y: 984},
+        right1: {x: 900, y: 984},
+        right2: {x: 968, y: 984},
+      },
     },
   },
   obstacles: {
@@ -102,6 +182,58 @@ export const spriteMap = {
     left: {x: 1348, y: 408},
     right: {x: 1412, y: 408}
   },
+  explosion: {
+    width: 128,
+    height: 128,
+    frame1: {
+      x: 1244, y: 512,
+    },
+    frame2: {
+      x: 1372, y: 512
+    }
+  },
+
+  /**
+   * Спавн танков
+   */
+  spawnBubble: {
+    frame1: {x: 1050, y: 382},
+    frame2: {x: 1114, y: 382},
+    frame3: {x: 1178, y: 382},
+    frame4: {x: 1242, y: 382},
+  },
+
+  /**
+   * Броня(неуязвимость) в первые 3 секунды боя после появления танка 
+   */
+  ressurectionBubble: {
+    frame1: {x: 1052, y: 576},
+    frame2: {x: 1116, y: 576}
+  },
+
+  /**
+   * Очки за убийство танков и подбор бонусов
+   */
+  scores: {
+    score100: {x: 1180, y: 638},
+    score200: {x: 1244, y: 638},
+    score300: {x: 1308, y: 638},
+    score400: {x: 1372, y: 638},
+    score500: {x: 1436, y: 638},
+  },
+  pickUps: {
+    helmet: {x: 1052, y: 448},
+    clock: {x: 1116, y: 448},
+    shovel: {x: 1180, y: 448},
+    star: {x: 1244, y: 448},
+    grenade: {x: 1308, y: 448},
+    tank: {x: 1372, y: 448},
+    pistol: {x: 1436, y: 448},
+  },
+  eagle: {
+    alive: {x: 1242, y: 128},
+    dead: {x: 1306, y: 128},
+  },
   ui: {
     enemyTank: {
       x: 1308,
@@ -114,6 +246,18 @@ export const spriteMap = {
     playerTank: {
       x: 1536,
       y: 672,
+    },
+    pause: {
+      width: 156,
+      height: 32,
+      x: 1184,
+      y: 704,
+    },
+    gameOver: {
+      width: 124,
+      height: 64,
+      x: 1184,
+      y: 736,
     }
   }
 };
@@ -130,11 +274,38 @@ const cssSprite = [
   {
     className: 'player-tank',
     coords: spriteMap.ui.playerTank,
+  },
+  {
+    className: 'menu-tank1',
+    coords: spriteMap.tanks.player.yellow.right1,
+  },
+  {
+    className: 'menu-tank2',
+    coords: spriteMap.tanks.player.yellow.right2,
+  },
+  {
+    className: 'pause',
+    coords: spriteMap.ui.pause,
+  },
+  {
+    className: 'game-over',
+    coords: spriteMap.ui.gameOver,
   }
 ]
 
 function makeCssRule(coords: Coords) {
-  return `background-position: ${coords.x * - 1}px ${coords.y * - 1}px;`;
+  let output = `background-position: ${coords.x * - 1}px ${coords.y * - 1}px;`;
+  if (coords.width) {
+    output += `
+      width: ${coords.width}px;
+    `
+  }
+  if (coords.height) {
+    output += `
+      height: ${coords.height}px;
+    `
+  }
+  return output;
 }
 
 export function appendCssSprite() {
@@ -161,8 +332,18 @@ export function appendCssSprite() {
       `;
       return acc;
     }, '')}
-    .sprite.tank-menu {
-      ${makeCssRule(spriteMap.tanks.player.yellow.right1)}
+    .menu-tank {
+      animation: menuTankAnimate 0.05s linear infinite;
+      width: 52px;
+      height: 52px;
+    }
+    @keyframes menuTankAnimate {
+      0%, 49.999%, 100% {
+        ${makeCssRule(cssSprite[3].coords)}
+      }
+      50%, 99.999% {
+        ${makeCssRule(cssSprite[4].coords)}
+      }
     }
   `;
 

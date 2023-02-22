@@ -57,6 +57,9 @@ export default class Tank {
     right1: Coords
     right2: Coords
   }
+  tankColor: string
+  tankType: string;
+  bonuses: string[] = []
   reload: boolean = false
   hasActiveBullet: boolean = false
   shootAiTimeout: number = 0
@@ -64,6 +67,8 @@ export default class Tank {
   speed: number = 1
   hp: number = 1
   killScore: number = 100
+  changeColorCallback: () => void;
+  changeColorTimeout: number = 0;
 
 
   constructor(tankOptions: TankOptions, renderer: Renderer) {
@@ -81,7 +86,24 @@ export default class Tank {
     if (tankOptions.killScore) {
       this.killScore = tankOptions.killScore;
     }
+    this.tankColor = tankOptions.tankColor;
+    this.tankType = tankOptions.tankType;
     this.tankModel = spriteMap.tanks[tankOptions.tankType || 'player'][tankOptions.tankColor || 'yellow'];
+    this.changeColorCallback = () => {
+      this.tankColor = this.tankColor === 'red' ? 'grey' : 'red';
+      this.tankModel = spriteMap.tanks[this.tankType][this.tankColor];
+      this.changeColorTimeout = setTimeout(this.changeColorCallback, 600);
+    };
+    if (this.tankColor === 'red') {
+      const bonuses = ['helmet', 'clock', 'shovel', 'star', 'grenade', 'tank', 'pistol'];
+      bonuses.sort((a, b) => Math.random() - 0.5);
+      const bonusesCount = Math.floor(Math.random() * this.hp);
+      for (let i = 0; i < bonusesCount; i++) {
+        this.bonuses.push(bonuses.pop()!);
+      }
+      
+      this.changeColorTimeout = setTimeout(this.changeColorCallback, 600);
+    }
     this.direction = tankOptions.startDirection as direction;
     switch (this.direction) {
       case 'up': this.spriteX = this.tankModel.up1.x; this.spriteY = this.tankModel.up1.y; break;

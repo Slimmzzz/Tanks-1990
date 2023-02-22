@@ -135,6 +135,13 @@ export class Bullet {
         maybeTank.hp -= 1;
         if (!maybeTank.hp) {
           maybeTank.die();
+        } else {
+          if (maybeTank.tankColor === 'red' && !maybeTank.bonuses.length) {
+            clearTimeout(maybeTank.changeColorTimeout);
+            // TODO заспавнить бонус
+            maybeTank.tankColor = 'grey';
+            maybeTank.tankModel = spriteMap.tanks[maybeTank.tankType][maybeTank.tankColor];
+          }
         }
       }
     }

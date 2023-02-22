@@ -6,7 +6,7 @@ const menu = `
 <img class='titleImg' src='/src/view/Scene/img/battle_city.png'>
 <div class='menuWrapper'>
 <div class='tank'>
-<img class='tankImg' src='/src/view/Scene/img/tank.png'>
+<img class='tankImg sprite menu-tank' src='data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 52 52" width="52" height="52"><rect fill="none" stroke="none" width="52" height="52" /></svg>'>
 </div>
 <div>
 <p class='start'>START</p>
@@ -26,12 +26,12 @@ function tankPosition() {
   let margin = 0
   window.addEventListener('keydown', function(e){
 if(tankpos <=1 && e.keyCode == 83){
-  margin += 32
+  margin += 62
   tank.style.marginTop = margin+'px'
   tankpos++
 }
 if(tankpos > 0 && e.keyCode == 87){
-  margin -= 32
+  margin -= 62
   tank.style.marginTop = margin+'px'
   tankpos--
 }
@@ -49,8 +49,8 @@ if(e.keyCode == 13 && margin == 0){
 
 export function renderMenu() {
   if(location.hash == '#menu'){
-document.body.innerHTML = menu
-  tankPosition() 
+    document.body.innerHTML = menu
+    tankPosition() 
   } else{
     document.body.innerHTML = '<div></div>'
   }
