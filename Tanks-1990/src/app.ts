@@ -73,6 +73,11 @@ document.addEventListener('ui:update-health', (e) => {
   const { health } = (<CustomEvent>e).detail;
   setHealth(health);
 })
+
+document.addEventListener('ui:game-over', (e) => {
+  const { score, enemiesKilledByScore } = (<CustomEvent>e).detail;
+  // TODO использовать score и enemiesKilledByScore в статистике
+})
 // window.addEventListener('keydown', (e)=>{
 //   if (e.keyCode == 70) {
 //     removeHealth()
