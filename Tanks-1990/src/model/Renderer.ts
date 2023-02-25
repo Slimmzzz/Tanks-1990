@@ -6,7 +6,10 @@ import { Bullet } from "./Bullet";
 import { Obstacle } from "./sampleObstacle.ts"
 // @ts-ignore
 import Tank from './sampleTank.ts';
-import Game from '../controller/Game';
+// @ts-ignore
+import Game from '../controller/Game.ts';
+// @ts-ignore
+import { Pickup } from "./Pickup.ts";
 
 
 export default class Renderer {
@@ -19,6 +22,7 @@ export default class Renderer {
   obstacles: Obstacle[] = []
   tanks: Tank[] = []
   bullets: Bullet[] = []
+  pickups: Pickup[] = []
   bulletNextID: number = 1
   obstacleCoordsMatrix: Obstacle[][] = [];
   game: Game | undefined = undefined

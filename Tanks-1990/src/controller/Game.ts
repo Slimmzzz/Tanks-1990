@@ -20,6 +20,7 @@ export default class Game {
   forestRenderer: Renderer
   level: ObstacleCollection
   currentTankId: number = 2
+  currentPickupId: number = 1
   playerTank: Tank
   private enemyTankSpawns: Coords[] = [
     {x: 2, y: 2},
@@ -33,6 +34,7 @@ export default class Game {
   score: number = 0
   enemiesToGo: number = 20
   static enemiesCount: number = 20
+  areEnemiesFreezed: boolean = false
   enemiesKilledByScore: {
     '100': number
     '200': number
@@ -98,10 +100,11 @@ export default class Game {
     //   y: 2,
     //   startDirection: 'left',
     //   isEnemy: true,
-    //   tankType: 'enemy2',
-    //   tankColor: 'green',
+    //   tankType: 'enemy4',
+    //   tankColor: 'red',
     //   tankModelWidth: spriteMap.tanks.enemy1.width,
     //   tankModelHeight: spriteMap.tanks.enemy1.height,
+    //   hp: 10 || spriteMap.tanks[`enemy4`].hp || 3,
     //   ignoreAIBehaviour: true
     // }, this.renderer))
     // this.currentTankId += 1;
@@ -116,9 +119,10 @@ export default class Game {
         isEnemy: true,
         tankType: `enemy${typeIndex}`,
         tankColor: Math.random() > 0.4 ? 'grey' : Math.random() > 0.8 ? 'green' : 'red',
+        // tankColor: 'red',
         tankModelWidth: spriteMap.tanks[`enemy${typeIndex}`].width,
         tankModelHeight: spriteMap.tanks[`enemy${typeIndex}`].height,
-        hp: spriteMap.tanks[`enemy${typeIndex}`].hp || 1,
+        hp: (spriteMap.tanks[`enemy${typeIndex}`].hp || 1) + 1,
         speed: spriteMap.tanks[`enemy${typeIndex}`].speed || 1,
         killScore: spriteMap.tanks[`enemy${typeIndex}`].killScore,
       }, this.renderer));
@@ -135,6 +139,19 @@ export default class Game {
     };
     this.spawnTankTimeout = setTimeout(this.spawnTankCallback, 80);
     
+    document.addEventListener('ui:game-over', (e) => {
+      this.destroyLevel();
+    })
+
+    document.addEventListener('game:unfreeze-enemies', () => {
+      this.areEnemiesFreezed = false
+      for (const tank of this.renderer.tanks) {
+        if (tank.isEnemy) {
+          tank.initEnemyBehavior();
+        }
+      }
+    })
+
     const onKeyUpListener = onTankMoveKeyUpFactory(this.playerTank);
     window.addEventListener('keyup', onKeyUpListener);
   }
@@ -162,9 +179,10 @@ export default class Game {
           isEnemy: true,
           tankType: `enemy${typeIndex}`,
           tankColor: Math.random() > 0.4 ? 'grey' : Math.random() > 0.8 ? 'green' : 'red',
+          // tankColor: 'red',
           tankModelWidth: spriteMap.tanks[`enemy${typeIndex}`].width,
           tankModelHeight: spriteMap.tanks[`enemy${typeIndex}`].height,
-          hp: spriteMap.tanks[`enemy${typeIndex}`].hp || 1,
+          hp: (spriteMap.tanks[`enemy${typeIndex}`].hp || 1) + 1,
           speed: spriteMap.tanks[`enemy${typeIndex}`].speed || 1,
           killScore: spriteMap.tanks[`enemy${typeIndex}`].killScore,
         }, this.renderer));
@@ -194,6 +212,30 @@ export default class Game {
     //   console.log(this.renderer.tanks);
     // }
   }
+
+  destroyLevel() {
+    setTimeout(() => {
+      [ 'tanks', 'pickups', 'bullets' ].forEach((key: string) => {
+        const entitites = this.renderer[key];
+        for (const entity of entitites) {
+          entity.destroy();
+        }
+      });
+      for (let y = 0; y < 26; y++) {
+        for (let x = 0; x < 26; x++) {
+          if (!!this.renderer.obstacleCoordsMatrix[y][x]) {
+            this.renderer.obstacleCoordsMatrix[y][x].destroy();
+          }
+          if (!!this.forestRenderer.obstacleCoordsMatrix[y][x]) {
+            this.forestRenderer.obstacleCoordsMatrix[y][x].destroy();
+          }
+        }
+      }
+      this.forestRenderer.destroy();
+      this.renderer.destroy();
+    }, 3500)
+  }
+  
 }
 
 // type levelCollectionIndex = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16';

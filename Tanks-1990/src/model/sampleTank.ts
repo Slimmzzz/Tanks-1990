@@ -13,9 +13,11 @@ import { Bullet } from "./Bullet.ts";
 // @ts-ignore
 import enemyBehaviour from './ai.ts';
 // @ts-ignore
-import { collidesWithCanvasBoundaries, collidesWithObstacles } from "./helpers.ts";
+import { collidesWithCanvasBoundaries, collidesWithObstacles, collidesWithDynamicObject } from "./helpers.ts";
 // @ts-ignore
 import { Globals } from '../app.ts';
+// @ts-ignore
+import { Pickup } from './Pickup.ts';
 
 
 export default class Tank {
@@ -69,7 +71,12 @@ export default class Tank {
   killScore: number = 100
   changeColorCallback: () => void;
   changeColorTimeout: number = 0;
-
+  isInvincible: boolean = false;
+  invincibleAnimationTimeout: number = 0
+  invincibleAnimationCallback: () => void
+  invinciblePosition: Coords = spriteMap.ressurectionBubble.frame1
+  invincibleFrameIterator: number = 0
+  playerLevel: number = 1
 
   constructor(tankOptions: TankOptions, renderer: Renderer) {
     this.renderer = renderer;
@@ -86,7 +93,7 @@ export default class Tank {
     if (tankOptions.killScore) {
       this.killScore = tankOptions.killScore;
     }
-    this.tankColor = tankOptions.tankColor;
+    this.tankColor = tankOptions.tankColor || 'yellow';
     this.tankType = tankOptions.tankType;
     this.tankModel = spriteMap.tanks[tankOptions.tankType || 'player'][tankOptions.tankColor || 'yellow'];
     this.changeColorCallback = () => {
@@ -97,7 +104,7 @@ export default class Tank {
     if (this.tankColor === 'red') {
       const bonuses = ['helmet', 'clock', 'shovel', 'star', 'grenade', 'tank', 'pistol'];
       bonuses.sort((a, b) => Math.random() - 0.5);
-      const bonusesCount = Math.floor(Math.random() * this.hp);
+      let bonusesCount = Math.floor(Math.random() * this.hp) || 1;
       for (let i = 0; i < bonusesCount; i++) {
         this.bonuses.push(bonuses.pop()!);
       }
@@ -128,13 +135,8 @@ export default class Tank {
     };
     this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
     if (this.isEnemy) {
-      if (!tankOptions.ignoreAIBehaviour) {
+      if (!tankOptions.ignoreAIBehaviour && !this.renderer.game.areEnemiesFreezed) {
         this.initEnemyBehavior();
-        const shootAiCallback = () => {
-          this.shoot();
-          this.shootAiTimeout = setTimeout(shootAiCallback, 1000);
-        }
-        shootAiCallback();
       }
     } else {
       Object.defineProperty(window, '_tank', {
@@ -145,11 +147,57 @@ export default class Tank {
       this.initKeyController();
     }
 
+    this.invincibleAnimationCallback = () => {
+      this.invincibleFrameIterator += 1;
+      if (this.invincibleFrameIterator > 5) {
+        this.invincibleFrameIterator = 0;
+        this.invinciblePosition.x = this.invinciblePosition.x === 1052 ? 1116 : 1052;
+      }
+      this.renderer.add({
+        spriteX: this.invinciblePosition.x,
+        spriteY: this.invinciblePosition.y,
+        spriteWidth: 64,
+        spriteHeight: 64,
+        canvasWidth: 64,
+        canvasHeight: 64,
+        canvasX: this.dx - 6,
+        canvasY: this.dy - 6
+      });
+      this.invincibleAnimationTimeout = setTimeout(this.invincibleAnimationCallback, 16);
+    }
+
+    if (!this.isEnemy) {
+      this.isInvincible = true;
+      this.startInvincibleAnimation();
+      setTimeout(() => {
+        this.isInvincible = false;
+        clearTimeout(this.invincibleAnimationTimeout);
+      }, 3000);
+    }
+
+    document.addEventListener('game:update-player-level', () => {
+      if (!this.isEnemy && this.playerLevel < 4) {
+        this.playerLevel += 1;
+        this.updatePlayerLevel();
+      }
+    });
+
+    document.addEventListener('game:pistol', () => {
+      if (this.playerLevel === 1) {
+        this.playerLevel = 2;
+      }
+      document.dispatchEvent(new CustomEvent('game:update-player-level'));
+    })
     // this.renderer.tanks.push(this);
   }
 
   initEnemyBehavior() {
     enemyBehaviour(this);
+    const shootAiCallback = () => {
+      this.shoot();
+      this.shootAiTimeout = setTimeout(shootAiCallback, 1000);
+    }
+    shootAiCallback();
   }
 
   get isMoving() {
@@ -230,7 +278,71 @@ export default class Tank {
         return false;
       }
     }
-    
+
+    // Collision with pickups
+
+    if (!this.isEnemy) {
+      let maybePickup;
+      for (const pickup of this.renderer.pickups) {
+        if (direction === 'up') {
+          if (this.dy === pickup.dy + pickup.height + 1) {
+            if (this.dx === pickup.dx || (this.dx > pickup.dx &&
+              this.dx < pickup.dx + pickup.width) ||
+              (this.dx + this.width > pickup.dx &&
+                this.dx + this.width < pickup.dx + pickup.width)
+              ) {
+              maybePickup = pickup;
+              break;
+            }
+          }
+        } else if (direction === 'down') {
+          if (this.dy + this.height === pickup.dy - 1) {
+            if (
+              this.dx === pickup.dx ||
+              (this.dx > pickup.dx &&
+                this.dx < pickup.dx + pickup.width) ||
+                (this.dx + this.width > pickup.dx &&
+                  this.dx + this.width < pickup.dx + pickup.width)  
+            ) {
+              maybePickup = pickup;
+              break;
+            }
+          }
+        } else if (direction === 'left') {
+          if (this.dx === pickup.dx + pickup.width + 1) {
+            if (
+              this.dy === pickup.dy ||
+              (this.dy > pickup.dy &&
+                this.dy < pickup.dy + pickup.height) ||
+              (this.dy + this.height > pickup.dy &&
+                this.dy + this.height < pickup.dy + pickup.height)
+            ) {
+              maybePickup = pickup; 
+              break;
+            }
+          }
+        } else if (direction === 'right') {
+          if (this.dx + this.width === pickup.dx - 1) {
+            if (
+              this.dy === pickup.dy ||
+              (this.dy > pickup.dy &&
+                this.dy < pickup.dy + pickup.height) ||
+              (this.dy + this.height > pickup.dy &&
+                this.dy + this.height < pickup.dy + pickup.height)
+            ) {
+              maybePickup = pickup; 
+              break;
+            }
+          }
+        }
+      }  
+      if (maybePickup) {
+        maybePickup.action();
+        maybePickup.destroy();
+      }
+    }
+
+
     // Collision with obstacles
 
     let maybeObstacles = collidesWithObstacles(this, direction);
@@ -262,6 +374,20 @@ export default class Tank {
       }
     }
     return true;
+  }
+
+  startInvincibleAnimation() {
+    this.invincibleAnimationTimeout = setTimeout(this.invincibleAnimationCallback, 16);
+  }
+
+  updatePlayerLevel() {
+    this.tankType = `player${this.playerLevel}`;
+    this.tankModel = spriteMap.tanks[this.tankType][this.tankColor];
+    this.spriteWidth = spriteMap.tanks[this.tankType].spriteWidth;
+    this.spriteHeight = spriteMap.tanks[this.tankType].spriteHeight;
+    if (this.playerLevel === 4) {
+      this.hp = 2;
+    }
   }
 
   move(direction: direction) {
@@ -326,20 +452,48 @@ export default class Tank {
     }
   }
 
-
   shoot() {
-    if (this.isAlive && !this.hasActiveBullet) {
+    if (this.isAlive && !this.hasActiveBullet && !this.reload) {
       new Bullet({
         id: this.renderer.nextBulletID,
         x: this.dx, 
         y: this.dy
       }, this.renderer, this).move(this.direction);
+      this.reload = true;
+      setTimeout(() => {
+        this.reload = false;
+      }, 160);
       if (!this.isEnemy) {
         Globals.audio.shot.play();
+        if (this.playerLevel > 2) {
+          setTimeout(() => {
+            new Bullet({
+              id: this.renderer.nextBulletID,
+              x: this.dx, 
+              y: this.dy,
+              isBonusBullet: true
+            }, this.renderer, this).move(this.direction);
+            this.renderer.nextBulletID += 1;
+          }, 160)
+        }
       }
       this.hasActiveBullet = true;
       this.renderer.nextBulletID += 1;
     }
+  }
+
+  dropPickup() {
+    const type = this.bonuses.pop();
+    const x = Math.floor(Math.random() * (this.renderer.canvas.width - 64));
+    const y = Math.floor(Math.random() * (this.renderer.canvas.height - 60));
+    const id = Number(`${this.renderer.game!.currentPickupId}`);
+    this.renderer.game!.currentPickupId += 1;
+
+    if (this.renderer.pickups.length) {
+      this.renderer.pickups[0].destroy();
+    }
+
+    this.renderer.pickups.push(new Pickup({ x, y, type: (<string>type), id }, this.renderer))
   }
 
   die() {
@@ -349,7 +503,11 @@ export default class Tank {
     this.destroy();
     this.dx = this.dy = -80;
     if (this.isEnemy) {
-      this.renderer.game.spawnTankTimeout = setTimeout(this.renderer.game.spawnTankCallback, 80);
+      this.renderer.game.enemiesToGo -= 1;
+      console.log('Enemies left: ', this.renderer.game.enemiesToGo)
+      if (this.renderer.game.enemiesToGo > 0) {
+        this.renderer.game.spawnTankTimeout = setTimeout(this.renderer.game.spawnTankCallback, 80);
+      }
       this.renderer.game.score += this.killScore;
       this.renderer.game.enemiesKilledByScore[`${this.killScore}`] += 1;
       document.dispatchEvent(new CustomEvent('ui:update-score', {
@@ -360,11 +518,7 @@ export default class Tank {
           score: this.renderer.game.score
         }
       }));
-      this.renderer.game.enemiesToGo -= 1;
       document.dispatchEvent(new CustomEvent('ui:remove-enemy-tank', {
-        /**
-         * TODO
-         */
         detail: {
           tanks: this.renderer.game.enemiesToGo
         }

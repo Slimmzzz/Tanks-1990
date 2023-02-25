@@ -17,6 +17,7 @@ interface BulletOptions {
   id: number
   x: number
   y: number
+  isBonusBullet?: boolean
 }
 
 export class Bullet {
@@ -44,6 +45,7 @@ export class Bullet {
   bulletFly: boolean = true
   tank: Tank
   bulletMoveInterval: number = 0
+  isBonusBullet: boolean = false
 
   _pingRendererTimeoutCallback: () => void
 
@@ -53,6 +55,12 @@ export class Bullet {
     this.id = bulletOptions.id
     this.dx = bulletOptions.x
     this.dy = bulletOptions.y
+    if (bulletOptions.isBonusBullet) {
+      this.isBonusBullet = true;
+    }
+    if (this.tank.playerLevel > 1) {
+      this.speed = 3;
+    }
 
     this._pingRendererTimeoutCallback = () => {
       this.renderer.add({
@@ -116,9 +124,10 @@ export class Bullet {
       for (const obstacle of maybeObstacles) {
         if (!obstacle.canShootThrough) {
           this.bulletFly = false;
-          if (obstacle.type === 'b') {
+          const breakArmor = this.tank.playerLevel === 4;
+          if (obstacle.type === 'b' || (obstacle.type === 'a' && breakArmor)) {
             obstacle.isHitFrom[direction] = true;
-            obstacle.modify(direction);
+            obstacle.modify(direction, breakArmor);
           }
         }
       }
@@ -132,15 +141,25 @@ export class Bullet {
       if (this.tank.isEnemy !== maybeTank.isEnemy) {
         Globals.audio.tankDamage.currentTime = 0;
         Globals.audio.tankDamage.play();
-        maybeTank.hp -= 1;
+        if (!maybeTank.isInvincible) {
+          maybeTank.hp -= 1;
+        }
+        if (maybeTank.playerLevel === 4) {
+          maybeTank.playerLevel = 1;
+          document.dispatchEvent(new CustomEvent('game:update-player-level'));
+        }
         if (!maybeTank.hp) {
           maybeTank.die();
         } else {
-          if (maybeTank.tankColor === 'red' && !maybeTank.bonuses.length) {
-            clearTimeout(maybeTank.changeColorTimeout);
-            // TODO заспавнить бонус
-            maybeTank.tankColor = 'grey';
-            maybeTank.tankModel = spriteMap.tanks[maybeTank.tankType][maybeTank.tankColor];
+          if (maybeTank.tankColor === 'red') {
+            if (maybeTank.bonuses.length) {
+              maybeTank.dropPickup();
+              if (!maybeTank.bonuses.length) {
+                clearTimeout(maybeTank.changeColorTimeout);
+                maybeTank.tankColor = 'grey';
+                maybeTank.tankModel = spriteMap.tanks[maybeTank.tankType][maybeTank.tankColor];
+              }
+            } 
           }
         }
       }
@@ -235,7 +254,9 @@ export class Bullet {
     if (isExploding) {
       this.explosion();
     }
-    this.tank.hasActiveBullet = false;
+    if (!this.isBonusBullet) {
+      this.tank.hasActiveBullet = false;
+    }
     const spliceIndex = this.renderer.bullets.findIndex( (b: Bullet) => {
       return b.id === this.id;
     });
