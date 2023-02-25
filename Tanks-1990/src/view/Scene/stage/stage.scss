@@ -1,0 +1,18 @@
+.stageWraper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height: 840px;
+  width: 918px;
+  background-color: grey;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.stageTittle{
+  font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+}

@@ -1,5 +1,9 @@
 // @ts-ignore
+import { Globals } from "../../../app.ts";
+// @ts-ignore
 import { gameOver } from "../gameOver/gameOver.ts";
+// @ts-ignore
+import { lvlScore } from "../lvlScore/lvlScore.ts";
 // @ts-ignore
 import "./sizebar.scss";
 

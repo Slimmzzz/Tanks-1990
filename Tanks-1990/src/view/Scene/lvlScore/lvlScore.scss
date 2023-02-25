@@ -1,0 +1,144 @@
+.lvlScoreWrapper{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  height: 840px;
+  width: 918px;
+  background-color: black;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-top: 30px;
+
+}
+
+.hiScoreWrapper{
+  display: flex;
+  justify-content: center;
+}
+
+.hiScoreTittle{
+  font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+  color: red;
+  margin-right: 20px;
+}
+
+.hiScoreScore{
+font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+  color: white;
+}
+
+.lvlStage{
+  font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+  color: white;
+}
+
+.currentScore{
+  display: flex;
+  padding-left: 210px;
+}
+
+.lvlScoreTittle{
+  font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+  color: red;
+  margin-right: 20px;
+}
+
+.lvlScoreCounter{
+font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+  color: white;
+}
+
+.allPTS{
+  display: flex;
+  padding-left: 324px;
+}
+
+.PTS{
+  margin-right: 55px;
+}
+
+.tanksTotal{
+  margin-right: 10px;
+}
+
+.PTsEnemyTanks1, .PTsEnemyTanks2, .PTsEnemyTanks3, .PTsEnemyTanks4{
+  font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+  color: white;
+  margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.PTSArrow{
+  margin-right: 10px;
+}
+
+.PTSArrow1, .PTSArrow2, .PTSArrow3, .PTSArrow4{
+font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+  color: white;
+  margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.enemyTank{
+  display: flex;
+  flex-direction: column;
+}
+
+.firstTank, .secondTank, .thirdTank, .fourthTank{
+  font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+  color: white;
+  margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.firstTankImg, .secondTankImg, .thirdTankImg, .fourthTankImg{
+  margin-bottom: 8px;
+}
+
+.killsTanksTotal{
+  display: flex;
+  padding-left: 210px;
+  border-top: 1px solid white;
+}
+
+.killsTanksTotalTittle{
+  font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+  color: white;
+  margin-right: 205px;
+}
+
+.killsTanksTotalScore{
+  font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+  color: white;
+}

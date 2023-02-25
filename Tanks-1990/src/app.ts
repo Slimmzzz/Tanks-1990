@@ -11,6 +11,10 @@ import { help } from './view/Scene/help/help.ts';
 import Game from './controller/Game.ts';
 // @ts-ignore
 import { appendCssSprite } from './view/sprite.ts';
+// @ts-ignore
+import { stageRender } from './view/Scene/stage/stage.ts';
+// @ts-ignore
+import { lvlScore } from './view/Scene/lvlScore/lvlScore.ts';
 
 appendCssSprite()
 
@@ -47,17 +51,24 @@ Object.defineProperty(window, '_globals', {
 location.hash = 'menu';
 renderMenu();
 
+
 document.addEventListener('load', () => {
 });
 window.addEventListener('hashchange', () =>{
+  // if(location.hash =='#test'){
+  //   lvlScore(0, Globals.currentLevel, Globals.scoreLevel)
+  // }
   if (location.hash == '#menu') {
     renderMenu();
   }
   if (location.hash == '#stage') {
     renderMenu();
-    main();
+    stageRender(Globals.currentLevel)
+    setTimeout(() => {
+       main();
     addSizeBar();
     updateEnemy(Game.enemiesCount);
+    }, 2000);
   } 
   if(location.hash == '#help') {
     help();
