@@ -89,3 +89,9 @@ document.addEventListener('ui:update-health', (e) => {
 //     removeHealth()
 //   }
 // })
+
+const ghLogo = document.querySelector('.ghLogo') as HTMLImageElement;
+  
+ghLogo.addEventListener('click', ()=>{
+  window.open('https://github.com/Slimmzzz/Tanks-1990')
+})

@@ -16,6 +16,7 @@ const menu = `
 </div>
 <div>
 <img class='ghLogo' src='https://raw.githubusercontent.com/gist/theAdityaNVS/f5b585d1082da2dffffea32434f37956/raw/7f9552d0a179b4f84059259fa878199e369b069c/GitHub-logo.gif'>
+<img class='click' src='https://i.pixelspeechbubble.com/7Svuvuuv/pixel-speech-bubble.png'>
 </div>
 </div>
 `
@@ -55,4 +56,3 @@ export function renderMenu() {
     document.body.innerHTML = '<div></div>'
   }
 }
-
