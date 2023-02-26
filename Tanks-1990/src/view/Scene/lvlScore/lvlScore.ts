@@ -5,7 +5,7 @@ import { renderMenu } from '../menu/mainMenu.ts'
 // @ts-ignore
 import './lvlScore.scss'
 
-export function lvlScore(hiScore: number = 0, stage:number, scoreLevel: number) {
+export function lvlScore(hiScore: number = 0, stage:number, scoreLevel: number, enemiesKilledByScore: object) {
   document.body.innerHTML = `
    <div class='lvlScoreWrapper'>
    <div class='hiScoreWrapper'>
@@ -49,94 +49,94 @@ export function lvlScore(hiScore: number = 0, stage:number, scoreLevel: number) 
 </div>
 </div>
   `
-  PTsEnemyTanks(scoreArray)
+  // PTsEnemyTanks(enemiesKilledByScore)
 }
 
 
-function PTsEnemyTanks(arr:number[]) {
-  let firstTankScore = arr.filter(el => el == 100)
-let firstTank = document.querySelector('.PTsEnemyTanks1') as HTMLElement
-let firstTankTotal = document.querySelector('.firstTank') as HTMLElement
-let firstTankPTSCount = 0
-let firstTankTanksCount = 0
-let fitstInterval = setInterval(()=>{
-  if(firstTankTanksCount >= firstTankScore.length){
-clearInterval(fitstInterval)
+// function PTsEnemyTanks(enemiesKilledByScore: object) {
+//   let firstTankScore = arr.filter(el => el == 100)
+// let firstTank = document.querySelector('.PTsEnemyTanks1') as HTMLElement
+// let firstTankTotal = document.querySelector('.firstTank') as HTMLElement
+// let firstTankPTSCount = 0
+// let firstTankTanksCount = 0
+// let fitstInterval = setInterval(()=>{
+//   if(firstTankTanksCount >= firstTankScore.length){
+// clearInterval(fitstInterval)
 
-let secondTankScore = arr.filter(el => el == 200)
-let secondTank = document.querySelector('.PTsEnemyTanks2') as HTMLElement
-let secondTankTotal = document.querySelector('.secondTank') as HTMLElement
-let secondTankPTSCount = 0
-let secondTankTanksCount = 0
-let secondInterval = setInterval(()=>{
-  if(secondTankTanksCount >= secondTankScore.length){
-clearInterval(secondInterval)
-
-
-let thirdTankScore = arr.filter(el => el == 300)
-let thirdTank = document.querySelector('.PTsEnemyTanks3') as HTMLElement
-let thirdTankTotal = document.querySelector('.thirdTank') as HTMLElement
-let thirdTankPTSCount = 0
-let thirdTankTanksCount = 0
-let thirdInterval = setInterval(()=>{
-  if(thirdTankTanksCount >= thirdTankScore.length){
-clearInterval(thirdInterval)
+// let secondTankScore = arr.filter(el => el == 200)
+// let secondTank = document.querySelector('.PTsEnemyTanks2') as HTMLElement
+// let secondTankTotal = document.querySelector('.secondTank') as HTMLElement
+// let secondTankPTSCount = 0
+// let secondTankTanksCount = 0
+// let secondInterval = setInterval(()=>{
+//   if(secondTankTanksCount >= secondTankScore.length){
+// clearInterval(secondInterval)
 
 
-
-let fourthTankScore = arr.filter(el => el == 400)
-let fourthTank = document.querySelector('.PTsEnemyTanks4') as HTMLElement
-let fourthTankTotal = document.querySelector('.fourthTank') as HTMLElement
-let fourthTankPTSCount = 0
-let fourthTankTanksCount = 0
-let fourthInterval = setInterval(()=>{
-if(fourthTankTanksCount >= fourthTankScore.length){
-clearInterval(fourthInterval)
-
-let total = document.querySelector('.killsTanksTotalScore') as HTMLElement
-total.innerHTML = `${arr.length}`
-return arr.reduce((acc,el) => acc+el, 0)
-}
-else{
-  fourthTankPTSCount +=400
-  fourthTankTanksCount = fourthTankTanksCount+ 1
-  fourthTank.innerText = `${fourthTankPTSCount} PTS`
-  fourthTankTotal.innerHTML = `${fourthTankTanksCount}`
-}
-},800)
+// let thirdTankScore = arr.filter(el => el == 300)
+// let thirdTank = document.querySelector('.PTsEnemyTanks3') as HTMLElement
+// let thirdTankTotal = document.querySelector('.thirdTank') as HTMLElement
+// let thirdTankPTSCount = 0
+// let thirdTankTanksCount = 0
+// let thirdInterval = setInterval(()=>{
+//   if(thirdTankTanksCount >= thirdTankScore.length){
+// clearInterval(thirdInterval)
 
 
 
-}
-else{
-thirdTankPTSCount +=300
-  thirdTankTanksCount++
-  thirdTank.innerText = `${thirdTankPTSCount} PTS`
-  thirdTankTotal.innerHTML = `${thirdTankTanksCount}`
-}
+// let fourthTankScore = arr.filter(el => el == 400)
+// let fourthTank = document.querySelector('.PTsEnemyTanks4') as HTMLElement
+// let fourthTankTotal = document.querySelector('.fourthTank') as HTMLElement
+// let fourthTankPTSCount = 0
+// let fourthTankTanksCount = 0
+// let fourthInterval = setInterval(()=>{
+// if(fourthTankTanksCount >= fourthTankScore.length){
+// clearInterval(fourthInterval)
 
-},800)
+// let total = document.querySelector('.killsTanksTotalScore') as HTMLElement
+// total.innerHTML = `${arr.length}`
+// return arr.reduce((acc,el) => acc+el, 0)
+// }
+// else{
+//   fourthTankPTSCount +=400
+//   fourthTankTanksCount = fourthTankTanksCount+ 1
+//   fourthTank.innerText = `${fourthTankPTSCount} PTS`
+//   fourthTankTotal.innerHTML = `${fourthTankTanksCount}`
+// }
+// },800)
 
 
 
-} else{
-secondTankPTSCount +=200
-  ++secondTankTanksCount
-  secondTank.innerText = `${secondTankPTSCount} PTS`
-  secondTankTotal.innerHTML = `${secondTankTanksCount}`
-}
-},800)
+// }
+// else{
+// thirdTankPTSCount +=300
+//   thirdTankTanksCount++
+//   thirdTank.innerText = `${thirdTankPTSCount} PTS`
+//   thirdTankTotal.innerHTML = `${thirdTankTanksCount}`
+// }
+
+// },800)
 
 
 
-} else{
-  firstTankPTSCount +=100
-  firstTankTanksCount = firstTankTanksCount + 1
-  firstTank.innerText = `${firstTankPTSCount} PTS`
-  firstTankTotal.innerHTML = `${firstTankTanksCount}`
-}
-},800)
-}
+// } else{
+// secondTankPTSCount +=200
+//   ++secondTankTanksCount
+//   secondTank.innerText = `${secondTankPTSCount} PTS`
+//   secondTankTotal.innerHTML = `${secondTankTanksCount}`
+// }
+// },800)
+
+
+
+// } else{
+//   firstTankPTSCount +=100
+//   firstTankTanksCount = firstTankTanksCount + 1
+//   firstTank.innerText = `${firstTankPTSCount} PTS`
+//   firstTankTotal.innerHTML = `${firstTankTanksCount}`
+// }
+// },800)
+// }
 
 
 
