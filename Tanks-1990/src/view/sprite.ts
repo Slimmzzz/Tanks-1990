@@ -263,8 +263,8 @@ export const spriteMap = {
     score100: {x: 1180, y: 638},
     score200: {x: 1244, y: 638},
     score300: {x: 1308, y: 638},
-    score400: {x: 1372, y: 638},
-    score500: {x: 1436, y: 638},
+    score400: {x: 1372, y: 640},
+    score500: {x: 1436, y: 640},
   },
   pickUps: {
     helmet: {x: 1052, y: 448},
@@ -276,8 +276,8 @@ export const spriteMap = {
     pistol: {x: 1436, y: 448},
   },
   eagle: {
-    alive: {x: 1242, y: 128},
-    dead: {x: 1306, y: 128},
+    alive: {x: 1244, y: 128},
+    dead: {x: 1308, y: 128},
   },
   ui: {
     enemyTank: {

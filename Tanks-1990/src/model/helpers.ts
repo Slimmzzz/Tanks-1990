@@ -2,6 +2,8 @@ import { direction, dynamicObjectsKey } from '../interfaces';
 import Renderer from "./Renderer"
 // @ts-ignore
 import { Obstacle } from "./sampleObstacle.ts"
+// @ts-ignore
+import { spriteMap } from '../view/sprite.ts';
 
 export interface FakeCreature {
   id: number
@@ -11,6 +13,32 @@ export interface FakeCreature {
   height: number
   renderer: Renderer
   speed: number
+}
+
+export function renderScore(creature: FakeCreature, score: number) {
+  let i = 0;
+  let timeout = 0;
+  const drawScoreCallback = () => {
+    creature.renderer.add({
+      // @ts-ignore
+      spriteX: spriteMap.scores[`score${score}`].x,
+      // @ts-ignore
+      spriteY: spriteMap.scores[`score${score}`].y,
+      spriteWidth: 64,
+      spriteHeight: 64,
+      canvasWidth: 64,
+      canvasHeight: 64,
+      canvasX: creature.dx,
+      canvasY: creature.dy,
+    });
+    if (i < 60) {
+      i += 1;
+      timeout = setTimeout(drawScoreCallback, 16);
+    } else {
+      clearTimeout(timeout);
+    }
+  }
+  drawScoreCallback();
 }
 
 export function collidesWithCanvasBoundaries(creature: FakeCreature, direction: direction) {

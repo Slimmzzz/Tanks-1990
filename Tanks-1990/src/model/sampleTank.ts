@@ -13,7 +13,7 @@ import { Bullet } from "./Bullet.ts";
 // @ts-ignore
 import enemyBehaviour from './ai.ts';
 // @ts-ignore
-import { collidesWithCanvasBoundaries, collidesWithObstacles, collidesWithDynamicObject } from "./helpers.ts";
+import { collidesWithCanvasBoundaries, collidesWithObstacles, renderScore } from "./helpers.ts";
 // @ts-ignore
 import { Globals } from '../app.ts';
 // @ts-ignore
@@ -173,21 +173,22 @@ export default class Tank {
         this.isInvincible = false;
         clearTimeout(this.invincibleAnimationTimeout);
       }, 3000);
+      document.addEventListener('game:update-player-level', () => {
+        if (this.playerLevel < 4) {
+          this.playerLevel += 1;
+          this.updatePlayerLevel();
+          Globals.playerLevel = this.playerLevel;
+        }
+      });
+  
+      document.addEventListener('game:pistol', () => {
+        if (this.playerLevel < 3) {
+          this.playerLevel = 3;
+        }
+        document.dispatchEvent(new CustomEvent('game:update-player-level'));
+      })
     }
 
-    document.addEventListener('game:update-player-level', () => {
-      if (!this.isEnemy && this.playerLevel < 4) {
-        this.playerLevel += 1;
-        this.updatePlayerLevel();
-      }
-    });
-
-    document.addEventListener('game:pistol', () => {
-      if (this.playerLevel === 1) {
-        this.playerLevel = 2;
-      }
-      document.dispatchEvent(new CustomEvent('game:update-player-level'));
-    })
     // this.renderer.tanks.push(this);
   }
 
@@ -337,11 +338,29 @@ export default class Tank {
         }
       }  
       if (maybePickup) {
+        Globals.audio.takeBonus.play();
+        this.renderer.game.score += 500;
+        renderScore(maybePickup, 500);
         maybePickup.action();
         maybePickup.destroy();
       }
     }
 
+    // Collision with Eagle
+    // let hitsEagle: boolean = false;
+    // if (!Globals.isGameOver) {
+    //   if (direction === 'right') {
+
+    //   }
+    //     if (this.dy > 32 * 24) {
+    //       if (this.dx > 32 * 12 && this.dx < 32 * 14) {
+    //         hitsEagle = true;
+    //       }
+    //     }
+    // }
+    // if (hitsEagle) {
+    //   return false;
+    // }
 
     // Collision with obstacles
 
@@ -359,7 +378,8 @@ export default class Tank {
           let i = 32;
           let iceTimeout: number | undefined;
           let iceTimeoutCallback = () => {
-            this.move(direction);
+            try {
+              this.move(direction);
             if (i) {
               iceTimeout = setTimeout(iceTimeoutCallback, 16);
               i--;
@@ -367,6 +387,9 @@ export default class Tank {
               clearTimeout(iceTimeout);
               this.ignoreKeyboard = false;
               this.ignoreIce = false;
+            }
+            } catch (error) {
+              clearTimeout(iceTimeout);
             }
           }
           iceTimeout = setTimeout(iceTimeoutCallback, 16);
@@ -496,12 +519,34 @@ export default class Tank {
     this.renderer.pickups.push(new Pickup({ x, y, type: (<string>type), id }, this.renderer))
   }
 
+  animateExposion() {
+    let i = 0;
+    let timeout = 0;
+    const explosionCallback = () => {
+      this.renderer.add({
+        spriteX: spriteMap.explosion[`frame${i < 5 ? '1' : '2'}`].x,
+        spriteY: spriteMap.explosion.frame1.y,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        canvasWidth: 128,
+        canvasHeight: 128,
+        canvasX: this.dx - 32,
+        canvasY: this.dy - 32,
+      });
+      if (i < 10) {
+        i += 1;
+        timeout = setTimeout(explosionCallback, 16);
+      } else {
+        clearTimeout(timeout);
+      }
+    }
+    explosionCallback();
+  }
+
   die() {
-    // TODO explosion animation
-    // TODO передать в игру очки за убитый танк
     this.isAlive = false;
+    this.animateExposion();
     this.destroy();
-    this.dx = this.dy = -80;
     if (this.isEnemy) {
       this.renderer.game.enemiesToGo -= 1;
       console.log('Enemies left: ', this.renderer.game.enemiesToGo)
@@ -509,6 +554,7 @@ export default class Tank {
         this.renderer.game.spawnTankTimeout = setTimeout(this.renderer.game.spawnTankCallback, 80);
       }
       this.renderer.game.score += this.killScore;
+      renderScore(this, this.killScore);
       this.renderer.game.enemiesKilledByScore[`${this.killScore}`] += 1;
       document.dispatchEvent(new CustomEvent('ui:update-score', {
         /*
@@ -524,14 +570,19 @@ export default class Tank {
         }
       }));
       if (!this.renderer.game.enemiesToGo) {
+        const playerTank = this.renderer.tanks.find((tank: Tank) => tank.id === 1);
+        playerTank.isInvincible = true;
         document.dispatchEvent(new CustomEvent('ui:complete-level', {
           detail: {
+            playerTankLevel: playerTank.playerLevel,
+            playerLives: this.renderer.game.playerLives,
             score: this.renderer.game.score,
             enemiesKilledByScore: this.renderer.game.enemiesKilledByScore
           }
         }))
       }
     } else {
+      this.dx = this.dy = -80;
       this.renderer.game.playerLives -= 1;
       if (this.renderer.game.playerLives !== 0) {
         document.dispatchEvent(new CustomEvent('ui:update-health', {
