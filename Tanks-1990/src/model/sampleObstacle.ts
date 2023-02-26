@@ -105,22 +105,24 @@ export class Obstacle {
     setTimeout(animationTimeoutCallback, 640);
   };
 
-  modify(direction: direction) {
-    if (direction === 'right') {
-      this.spriteX = spriteMap.obstacles.b_hitFromRight.x;
-      this.spriteY = spriteMap.obstacles.b_hitFromRight.y;
-    }
-    if (direction === 'left') {
-      this.spriteX = spriteMap.obstacles.b_hitFromLeft.x;
-      this.spriteY = spriteMap.obstacles.b_hitFromLeft.y;
-    }
-    if (direction === 'up') {
-      this.spriteX = spriteMap.obstacles.b_hitFromUp.x;
-      this.spriteY = spriteMap.obstacles.b_hitFromUp.y;
-    }
-    if (direction === 'down') {
-      this.spriteX = spriteMap.obstacles.b_hitFromDown.x;
-      this.spriteY = spriteMap.obstacles.b_hitFromDown.y;
+  modify(direction: direction, breakArmor: boolean = false) {
+    if (!breakArmor) {
+      if (direction === 'right') {
+        this.spriteX = spriteMap.obstacles.b_hitFromRight.x;
+        this.spriteY = spriteMap.obstacles.b_hitFromRight.y;
+      }
+      if (direction === 'left') {
+        this.spriteX = spriteMap.obstacles.b_hitFromLeft.x;
+        this.spriteY = spriteMap.obstacles.b_hitFromLeft.y;
+      }
+      if (direction === 'up') {
+        this.spriteX = spriteMap.obstacles.b_hitFromUp.x;
+        this.spriteY = spriteMap.obstacles.b_hitFromUp.y;
+      }
+      if (direction === 'down') {
+        this.spriteX = spriteMap.obstacles.b_hitFromDown.x;
+        this.spriteY = spriteMap.obstacles.b_hitFromDown.y;
+      }
     }
     this.hits += 1;
     if (this.hits === 2) {

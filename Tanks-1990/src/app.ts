@@ -87,11 +87,16 @@ document.addEventListener('ui:update-health', (e) => {
 
 document.addEventListener('ui:game-over', (e) => {
   const { score, enemiesKilledByScore } = (<CustomEvent>e).detail;
+
   console.log(enemiesKilledByScore);
   lvlScore(Globals.highScore, Globals.currentLevel, score, enemiesKilledByScore)
   Globals.currentLevel+= 1
   Globals.scoreGame += score
+
 })
+
+  // TODO использовать score и enemiesKilledByScore в статистике
+
 // window.addEventListener('keydown', (e)=>{
 //   if (e.keyCode == 70) {
 //     removeHealth()
