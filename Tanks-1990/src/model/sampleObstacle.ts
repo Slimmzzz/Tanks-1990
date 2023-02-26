@@ -74,6 +74,11 @@ export class Obstacle {
         this.spriteY = spriteMap.obstacles.w.w1.y;
         this.canShootThrough = true;
         this.initWaterAnimation();
+        break;
+      case 'e':
+        this.spriteX = -32;
+        this.spriteY = -32;
+        this.canShootThrough = true;
     }
     this._pingRendererTimeoutCallback = () => {
       this.renderer.add({
@@ -87,7 +92,9 @@ export class Obstacle {
       });
       this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
     }
-    this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
+    if (this.type !== 'e') {
+      this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
+    }
   }
   
   initWaterAnimation() {
@@ -175,7 +182,7 @@ export class ObstacleCollection {
       this.realMap.push([]);
       const row = this.map[i];
       for (let j = 0; j < row.length; j++) {
-        if (!!row[j]) {
+        if (!!row[j].trim()) {
           this.realMap[i].push(this.create(j, i, row[j]))
         } else {
           this.realMap[i].push(null);

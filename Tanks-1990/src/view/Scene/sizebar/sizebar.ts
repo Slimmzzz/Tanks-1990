@@ -22,12 +22,14 @@ const sizeBar = `
 </div>
 `
 
-export function addSizeBar() {
-  document.body.style.display = 'flex'
+export function addSizeBar(currentStage: number) {
+  document.body.style.display = 'flex';
+  document.body.style.flexDirection = 'row-reverse';
   let bar = document.createElement('div')
   bar.classList.add('bar')
   bar.innerHTML = sizeBar
   document.body.appendChild(bar)
+  addStage(currentStage);
 }
 
 export function updateEnemy(num: number){
@@ -48,8 +50,8 @@ export function setHealth(hp: number) {
   }
 }
 
-export function addStage() {
+export function addStage(_stage: number) {
   let stage = document.querySelector('.stageCounter') as HTMLElement
-  stage.innerText = `${+stage.innerText + 1}`
+  stage.innerText = `${_stage}`;
 }
 

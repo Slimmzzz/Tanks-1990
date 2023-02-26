@@ -21,6 +21,8 @@ import { renderScoreMenu } from './view/Scene/score/score.ts';
 appendCssSprite()
 
 export const Globals = {
+  playerLives: 2,
+  playerLevel: 1,
   isGameOver: true,
   currentLevel: 1,
   scoreLevel: 0,
@@ -38,6 +40,7 @@ export const Globals = {
     tankDamage: new Audio('/public/sounds/tank-damage.mp3'),
   }
 }
+let gameID = 1;
 // Globals.audio.level.volume = 0.6;
 Globals.audio.level.loop = true;
 for (const sound of Object.values(Globals.audio)) {
@@ -50,6 +53,7 @@ Object.defineProperty(window, '_globals', {
   value: Globals
 })
 
+let game: Game | undefined;
 location.hash = 'menu';
 renderMenu();
 
@@ -64,12 +68,13 @@ window.addEventListener('hashchange', () =>{
     renderMenu();
   }
   if (location.hash == '#stage') {
-    renderMenu();
+    // renderMenu();
     stageRender(Globals.currentLevel)
     setTimeout(() => {
-       main();
-    addSizeBar();
-    updateEnemy(Game.enemiesCount);
+      addSizeBar(Globals.currentLevel);
+      updateEnemy(Game.enemiesCount);
+      game = new Game(gameID);
+      gameID += 1;
     }, 2000);
   } 
   if(location.hash == '#score'){
@@ -80,6 +85,16 @@ window.addEventListener('hashchange', () =>{
   }
 })
 
+let gameState;
+if (gameState = window.localStorage.getItem('GameState')) {
+  gameState = JSON.parse(gameState);
+  for (const key in gameState) {
+    // @ts-ignore
+    Globals[key] = gameState[key];
+  }
+  location.hash = '#stage';
+}
+
 document.addEventListener('ui:remove-enemy-tank', (e) => {
   const { tanks } = (<CustomEvent>e).detail;
   updateEnemy(tanks);
@@ -88,29 +103,56 @@ document.addEventListener('ui:remove-enemy-tank', (e) => {
 document.addEventListener('ui:update-health', (e) => {
   const { health } = (<CustomEvent>e).detail;
   setHealth(health);
+  Globals.playerLives = health;
 })
 
 document.addEventListener('ui:game-over', (e) => {
   const { score, enemiesKilledByScore } = (<CustomEvent>e).detail;
-  lvlScore(Globals.highScore, Globals.currentLevel, score, enemiesKilledByScore)
-  Globals.currentLevel = 1
-  Globals.scoreGame = 0
+  Globals.audio.gameOver.play();
+  game!.destroyLevel().then(() => {
+    game = undefined;
+    Globals.scoreGame += score;
+    lvlScore(Globals.highScore, Globals.currentLevel, Globals.scoreGame, enemiesKilledByScore);
 
+    if (Globals.scoreGame > Globals.highScore) {
+      window.localStorage.setItem('highScore', String(Globals.scoreGame));
+    }
+    window.localStorage.removeItem('GameState');
+
+    setTimeout(() => {
+      location.hash = '#menu';
+      location.reload();
+    }, 8000)
+  });
 })
 
 document.addEventListener('ui:complete-level', (e) => {
-  const { score, enemiesKilledByScore } = (<CustomEvent>e).detail;
-  lvlScore(Globals.highScore, Globals.currentLevel, score, enemiesKilledByScore)
-  Globals.currentLevel +=1
-  Globals.scoreGame = score
-  setTimeout(() => {
-    stageRender(Globals.currentLevel)
-  }, 11000);
-setTimeout(() => {
-       main();
-    addSizeBar();
-    updateEnemy(Game.enemiesCount);
-    }, 13000);
+  const { playerTankLevel, playerLives, score, enemiesKilledByScore } = (<CustomEvent>e).detail;
+  game!.destroyLevel().then(() => {
+    game = undefined;
+    Globals.scoreGame += score;
+    lvlScore(Globals.highScore, Globals.currentLevel, Globals.scoreGame, enemiesKilledByScore);
+    Globals.currentLevel +=1
+    window.localStorage.setItem('GameState', JSON.stringify({
+      currentLevel: Globals.currentLevel,
+      scoreGame: Globals.scoreGame,
+      playerLives: Globals.playerLives,
+      playerLevel: Globals.playerLevel,
+    }))
+    setTimeout(() => {
+      location.hash = '#menu';
+      location.reload();
+    }, 7000)
+    // setTimeout(() => {
+    //   stageRender(Globals.currentLevel)
+    // }, 11000);
+    // setTimeout(() => {
+    //   addSizeBar(Globals.currentLevel);
+    //   updateEnemy(Game.enemiesCount);
+    //   game = new Game(gameID, playerLives, playerTankLevel);
+    //   gameID += 1;
+    // }, 13000);
+  });
 })
 
   // TODO использовать score и enemiesKilledByScore в статистике

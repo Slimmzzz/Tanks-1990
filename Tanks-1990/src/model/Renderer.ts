@@ -10,6 +10,8 @@ import Tank from './sampleTank.ts';
 import Game from '../controller/Game.ts';
 // @ts-ignore
 import { Pickup } from "./Pickup.ts";
+// @ts-ignore
+import { Eagle } from "./Eagle.ts";
 
 
 export default class Renderer {
@@ -26,6 +28,7 @@ export default class Renderer {
   bulletNextID: number = 1
   obstacleCoordsMatrix: Obstacle[][] = [];
   game: Game | undefined = undefined
+  eagle: Eagle | null = null;
 
   constructor(root: HTMLDivElement, style?: string) {
     this.canvas = root.appendChild(document.createElement('canvas'));
@@ -78,5 +81,9 @@ export default class Renderer {
     }
     this.isActive = false;
     this.canvas.remove();
+    if (window.hasOwnProperty('_renderer')) {
+      // @ts-ignore
+      delete window['_renderer'];
+    }
   }
 }

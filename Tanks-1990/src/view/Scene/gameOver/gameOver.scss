@@ -3,8 +3,9 @@
   justify-content: center;
   align-items: flex-end;
   position: absolute;
+  z-index: 3;
   height: 840px;
-  width: 918px;
+  width: 970px;
   background-color: rgba(20, 19, 19, 0.7);
   left: 50%;
   transform: translateX(-50%);

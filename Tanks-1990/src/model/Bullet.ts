@@ -12,6 +12,8 @@ import Tank from './sampleTank.ts';
 import * as Helpers from './helpers.ts';
 // @ts-ignore
 import { Globals } from '../app.ts';
+// @ts-ignore
+import { gameOver } from '../view/Scene/gameOver/gameOver.ts';
 
 // export let scoreArray: number[] = []
 
@@ -120,6 +122,32 @@ export class Bullet {
       }
       return;
     }
+
+    // Collision with Eagle
+    let hitsEagle: boolean = false;
+    if (!Globals.isGameOver) {
+        if (this.dy > 32 * 24) {
+          if (this.dx > 32 * 12 && this.dx < 32 * 14) {
+            hitsEagle = true;
+          }
+        }
+    }
+
+    if (hitsEagle) {
+      Globals.isGameOver = true;
+      Globals.audio.hitEagle.play();
+      this.renderer.eagle.spriteX = spriteMap.eagle.dead.x;
+      this.renderer.eagle.spriteY = spriteMap.eagle.dead.y;
+      document.dispatchEvent(new CustomEvent('ui:game-over', {
+        detail: {
+          score: this.renderer.game.score,
+          enemiesKilledByScore: this.renderer.game.enemiesKilledByScore
+        }
+      }))
+      this.bulletFly = false;
+      gameOver();
+      return;
+    }
     
     // Check collisions for obstacles
     let maybeObstacles = Helpers.collidesWithObstacles(this, direction);
@@ -136,6 +164,7 @@ export class Bullet {
       }
       return;
     }
+
 
     // Check collisions with tanks
     let maybeTank = Helpers.collidesWithDynamicObject(this, direction, 'tanks');
