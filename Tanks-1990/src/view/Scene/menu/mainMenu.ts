@@ -10,7 +10,7 @@ const menu = `
 </div>
 <div>
 <p class='start'>START</p>
-<p class='setting'>SETTING</p>
+<p class='setting'>SCORE</p>
 <p class='help'>HELP</p>
 </div>
 </div>
@@ -39,10 +39,10 @@ if(tankpos > 0 && e.keyCode == 87){
 if(e.keyCode == 13 && margin == 0){
     this.location.hash = 'stage'
   }
-  if(e.keyCode == 13 && margin == 32){
-    this.location.hash = 'setting'
+  if(e.keyCode == 13 && margin == 62){
+    this.location.hash = 'score'
   }
-  if(e.keyCode == 13 && margin >32){
+  if(e.keyCode == 13 && margin >62){
     this.location.hash = 'help'
   }
   })
@@ -52,6 +52,10 @@ export function renderMenu() {
   if(location.hash == '#menu'){
     document.body.innerHTML = menu
     tankPosition() 
+    const ghLogo = document.querySelector('.ghLogo') as HTMLImageElement;
+    ghLogo.addEventListener('click', ()=>{
+  window.open('https://github.com/Slimmzzz/Tanks-1990')
+})
   } else{
     document.body.innerHTML = '<div></div>'
   }

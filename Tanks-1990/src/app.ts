@@ -15,6 +15,8 @@ import { appendCssSprite } from './view/sprite.ts';
 import { stageRender } from './view/Scene/stage/stage.ts';
 // @ts-ignore
 import { lvlScore } from './view/Scene/lvlScore/lvlScore.ts';
+// @ts-ignore
+import { renderScoreMenu } from './view/Scene/score/score.ts';
 
 appendCssSprite()
 
@@ -70,6 +72,9 @@ window.addEventListener('hashchange', () =>{
     updateEnemy(Game.enemiesCount);
     }, 2000);
   } 
+  if(location.hash == '#score'){
+    renderScoreMenu(Globals.highScore)
+  }
   if(location.hash == '#help') {
     help();
   }
@@ -88,8 +93,6 @@ document.addEventListener('ui:update-health', (e) => {
 document.addEventListener('ui:game-over', (e) => {
   const { score, enemiesKilledByScore } = (<CustomEvent>e).detail;
   lvlScore(Globals.highScore, Globals.currentLevel, score, enemiesKilledByScore)
-  // Globals.currentLevel+= 1
-  // Globals.scoreGame += score
   Globals.currentLevel = 1
   Globals.scoreGame = 0
 
@@ -118,8 +121,8 @@ setTimeout(() => {
 //   }
 // })
 
-const ghLogo = document.querySelector('.ghLogo') as HTMLImageElement;
+// const ghLogo = document.querySelector('.ghLogo') as HTMLImageElement;
   
-ghLogo.addEventListener('click', ()=>{
-  window.open('https://github.com/Slimmzzz/Tanks-1990')
-})
+// ghLogo.addEventListener('click', ()=>{
+//   window.open('https://github.com/Slimmzzz/Tanks-1990')
+// })
