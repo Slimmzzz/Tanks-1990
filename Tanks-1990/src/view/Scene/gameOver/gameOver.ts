@@ -20,11 +20,8 @@ export function gameOver() {
   setTimeout(function () {
     gameOverImg.style.transform = 'translateY(-660px)'
   }, 100)
-      setTimeout(()=>{
-lvlScore(0, Globals.currentLevel, Globals.scoreLevel)
-    }, 3500)
     setTimeout(() =>{
 location.hash ='menu'
 renderMenu()
-    }, 10000)
+    }, 11000)
 }
