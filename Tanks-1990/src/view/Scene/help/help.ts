@@ -36,6 +36,7 @@ export function help() {
   window.addEventListener('keydown', function(e){
     if(location.hash == '#help' && e.keyCode == 13){
 location.hash = '#menu'
+location.reload()
     }
   })
 }

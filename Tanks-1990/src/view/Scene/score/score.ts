@@ -14,6 +14,7 @@ export function renderScoreMenu(highScore:number) {
   window.addEventListener('keydown', function(e){
     if(location.hash == '#score' && e.keyCode == 13){
 location.hash = '#menu'
+location.reload()
     }
   })
 }
