@@ -335,7 +335,7 @@ const cssSprite = [
   {
     className: 'game-over',
     coords: spriteMap.ui.gameOver,
-  }
+  },
 ]
 
 function makeCssRule(coords: Coords) {

@@ -166,5 +166,6 @@ export function collidesWithDynamicObject(creature: FakeCreature, direction: dir
       }
     }
   }
+  
   return possiblyCreature;
 }

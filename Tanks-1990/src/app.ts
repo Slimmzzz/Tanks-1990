@@ -11,6 +11,12 @@ import { help } from './view/Scene/help/help.ts';
 import Game from './controller/Game.ts';
 // @ts-ignore
 import { appendCssSprite } from './view/sprite.ts';
+// @ts-ignore
+import { stageRender } from './view/Scene/stage/stage.ts';
+// @ts-ignore
+import { lvlScore } from './view/Scene/lvlScore/lvlScore.ts';
+// @ts-ignore
+import { renderScoreMenu } from './view/Scene/score/score.ts';
 
 appendCssSprite()
 
@@ -47,18 +53,28 @@ Object.defineProperty(window, '_globals', {
 location.hash = 'menu';
 renderMenu();
 
+
 document.addEventListener('load', () => {
 });
 window.addEventListener('hashchange', () =>{
+  // if(location.hash =='#test'){
+  //   lvlScore(0, Globals.currentLevel, Globals.scoreLevel)
+  // }
   if (location.hash == '#menu') {
     renderMenu();
   }
   if (location.hash == '#stage') {
     renderMenu();
-    main();
+    stageRender(Globals.currentLevel)
+    setTimeout(() => {
+       main();
     addSizeBar();
     updateEnemy(Game.enemiesCount);
+    }, 2000);
   } 
+  if(location.hash == '#score'){
+    renderScoreMenu(Globals.highScore)
+  }
   if(location.hash == '#help') {
     help();
   }
@@ -76,10 +92,37 @@ document.addEventListener('ui:update-health', (e) => {
 
 document.addEventListener('ui:game-over', (e) => {
   const { score, enemiesKilledByScore } = (<CustomEvent>e).detail;
-  // TODO использовать score и enemiesKilledByScore в статистике
+  lvlScore(Globals.highScore, Globals.currentLevel, score, enemiesKilledByScore)
+  Globals.currentLevel = 1
+  Globals.scoreGame = 0
+
 })
+
+document.addEventListener('ui:complete-level', (e) => {
+  const { score, enemiesKilledByScore } = (<CustomEvent>e).detail;
+  lvlScore(Globals.highScore, Globals.currentLevel, score, enemiesKilledByScore)
+  Globals.currentLevel +=1
+  Globals.scoreGame = score
+  setTimeout(() => {
+    stageRender(Globals.currentLevel)
+  }, 11000);
+setTimeout(() => {
+       main();
+    addSizeBar();
+    updateEnemy(Game.enemiesCount);
+    }, 13000);
+})
+
+  // TODO использовать score и enemiesKilledByScore в статистике
+
 // window.addEventListener('keydown', (e)=>{
 //   if (e.keyCode == 70) {
 //     removeHealth()
 //   }
+// })
+
+// const ghLogo = document.querySelector('.ghLogo') as HTMLImageElement;
+  
+// ghLogo.addEventListener('click', ()=>{
+//   window.open('https://github.com/Slimmzzz/Tanks-1990')
 // })

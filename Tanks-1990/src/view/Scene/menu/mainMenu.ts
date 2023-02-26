@@ -10,12 +10,13 @@ const menu = `
 </div>
 <div>
 <p class='start'>START</p>
-<p class='setting'>SETTING</p>
+<p class='setting'>SCORE</p>
 <p class='help'>HELP</p>
 </div>
 </div>
 <div>
 <img class='ghLogo' src='https://raw.githubusercontent.com/gist/theAdityaNVS/f5b585d1082da2dffffea32434f37956/raw/7f9552d0a179b4f84059259fa878199e369b069c/GitHub-logo.gif'>
+<img class='click' src='https://i.pixelspeechbubble.com/7Svuvuuv/pixel-speech-bubble.png'>
 </div>
 </div>
 `
@@ -38,10 +39,10 @@ if(tankpos > 0 && e.keyCode == 87){
 if(e.keyCode == 13 && margin == 0){
     this.location.hash = 'stage'
   }
-  if(e.keyCode == 13 && margin == 32){
-    this.location.hash = 'setting'
+  if(e.keyCode == 13 && margin == 62){
+    this.location.hash = 'score'
   }
-  if(e.keyCode == 13 && margin >32){
+  if(e.keyCode == 13 && margin >62){
     this.location.hash = 'help'
   }
   })
@@ -51,8 +52,11 @@ export function renderMenu() {
   if(location.hash == '#menu'){
     document.body.innerHTML = menu
     tankPosition() 
+    const ghLogo = document.querySelector('.ghLogo') as HTMLImageElement;
+    ghLogo.addEventListener('click', ()=>{
+  window.open('https://github.com/Slimmzzz/Tanks-1990')
+})
   } else{
     document.body.innerHTML = '<div></div>'
   }
 }
-

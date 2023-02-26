@@ -13,6 +13,9 @@ import * as Helpers from './helpers.ts';
 // @ts-ignore
 import { Globals } from '../app.ts';
 
+// export let scoreArray: number[] = []
+
+
 interface BulletOptions {
   id: number
   x: number
@@ -164,6 +167,13 @@ export class Bullet {
         }
       }
     }
+    // if(maybeTank && location.hash == '#stage'){
+      
+    //   if(maybeTank.isAlive == false && maybeTank.isEnemy == true){
+    //     scoreArray.push(maybeTank.killScore)
+    //     console.log(scoreArray)
+    //   }
+    // }
   }
   
   move(direction: string) {

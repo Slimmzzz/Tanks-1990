@@ -1,0 +1,48 @@
+.scoreWrapper{
+background-color: black;
+display: flex;
+justify-content: space-evenly;
+flex-direction: row;
+padding: 50px;
+padding-top: 25px;
+padding-bottom: 0;
+width: 834px;
+height: 838px;
+margin: 0 auto;
+}
+
+.bestScore{
+  display: flex;
+  position: absolute;
+  top:50%;
+left:50%;
+transform:translate(-50%, -50%);
+}
+
+.bestScoreTittle{
+  font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+  color: red;
+  margin-right: 15px;
+}
+
+.score{
+font-family: 'Common Pixel', sans-serif;
+  margin: 0;
+  font-size: 25px;
+  text-align: center;
+  color: white;
+}
+
+.scoreBack{
+  font-family: 'Common Pixel', sans-serif;
+  color: white;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+
+}
