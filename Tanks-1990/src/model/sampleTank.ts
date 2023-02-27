@@ -186,10 +186,10 @@ export default class Tank {
           this.playerLevel = 3;
         }
         document.dispatchEvent(new CustomEvent('game:update-player-level'));
-      })
+      });
     }
 
-    // this.renderer.tanks.push(this);
+    this.animateSpawn();
   }
 
   initEnemyBehavior() {
@@ -517,6 +517,43 @@ export default class Tank {
     }
 
     this.renderer.pickups.push(new Pickup({ x, y, type: (<string>type), id }, this.renderer))
+  }
+
+  animateSpawn() {
+    let i = 0;
+    let dx = Number(String(this.dx)) - 2;
+    let dy = Number(String(this.dy)) - 2;
+    let timeout = 0;
+    let frame = spriteMap.spawnBubble.frame1;
+
+    let spawnAnimationCallback = () => {
+      if ((i >= 5 && i < 10) || (i >= 25 && i < 30)) {
+        frame = spriteMap.spawnBubble.frame2;
+      } else if ((i >= 10 && i < 15) || (i >= 20 && i < 25)) {
+        frame = spriteMap.spawnBubble.frame3;
+      } else if (i >= 15 && i < 20) {
+        frame = spriteMap.spawnBubble.frame4;
+      } else if (i >= 30 && i < 35) {
+        frame = spriteMap.spawnBubble.frame1;
+      } else if (i >= 35) {
+        clearTimeout(timeout);
+      }
+      this.renderer.add({
+        spriteX: frame.x,
+        spriteY: frame.y,
+        spriteWidth: 64,
+        spriteHeight: 64,
+        canvasWidth: 64,
+        canvasHeight: 64,
+        canvasX: dx,
+        canvasY: dy,
+      });
+      i += 1;
+      if (i < 35) {
+        timeout = setTimeout(spawnAnimationCallback, 16);
+      }
+    };
+    spawnAnimationCallback();
   }
 
   animateExposion() {
