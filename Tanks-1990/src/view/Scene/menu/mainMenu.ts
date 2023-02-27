@@ -14,9 +14,15 @@ const menu = `
 <p class='help'>HELP</p>
 </div>
 </div>
-<div>
+<div class='footer'>
+<div class='github'>
 <img class='ghLogo' src='https://raw.githubusercontent.com/gist/theAdityaNVS/f5b585d1082da2dffffea32434f37956/raw/7f9552d0a179b4f84059259fa878199e369b069c/GitHub-logo.gif'>
 <img class='click' src='https://i.pixelspeechbubble.com/7Svuvuuv/pixel-speech-bubble.png'>
+</div>
+<img class='ghprofile1' src="https://avatars.githubusercontent.com/u/90145322?v=4">
+<img class='ghprofile2' src="https://avatars.githubusercontent.com/u/106067344?v=4">
+<img class='ghprofile3' src="https://avatars.githubusercontent.com/u/60061707?v=4">
+<img class='rsschool' src="https://i.ibb.co/G5J49YW/rsschool.png">
 </div>
 </div>
 `
@@ -54,8 +60,24 @@ export function renderMenu() {
     tankPosition() 
     const ghLogo = document.querySelector('.ghLogo') as HTMLImageElement;
     ghLogo.addEventListener('click', ()=>{
-  window.open('https://github.com/Slimmzzz/Tanks-1990')
-})
+  window.open('https://github.com/Slimmzzz/Tanks-1990');
+});
+const rsschool = document.querySelector('.rsschool') as HTMLImageElement;
+    rsschool.addEventListener('click', ()=>{
+  window.open('https://rs.school/js/')
+});
+const ghprofile1 = document.querySelector('.ghprofile1') as HTMLImageElement;
+    ghprofile1.addEventListener('click', ()=>{
+  window.open('https://github.com/Slimmzzz')
+});
+const ghprofile2 = document.querySelector('.ghprofile2') as HTMLImageElement;
+    ghprofile2.addEventListener('click', ()=>{
+  window.open('https://github.com/lickoneyou')
+});
+const ghprofile3 = document.querySelector('.ghprofile3') as HTMLImageElement;
+    ghprofile3.addEventListener('click', ()=>{
+  window.open('https://github.com/wasek07')
+});
   } else{
     document.body.innerHTML = '<div></div>'
   }

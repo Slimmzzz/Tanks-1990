@@ -31,6 +31,12 @@ margin: 0 auto;
     padding-top: 17px;
 }
 
+.footer{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .ghLogo{
   width: 70px;
   height: 70px;
@@ -43,4 +49,17 @@ margin: 0 auto;
     bottom: -98px;    
     transform: rotate(30deg);
     margin-left: -33px;
+}
+
+.ghprofile1, .ghprofile2, .ghprofile3{
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.rsschool{
+  width: 180px;
+  height: 70px;
+  cursor: pointer;
 }
