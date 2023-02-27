@@ -321,6 +321,14 @@ const cssSprite = [
     coords: spriteMap.ui.playerTank,
   },
   {
+    className: 'menu-tank1',
+    coords: spriteMap.tanks.player.yellow.right1,
+  },
+  {
+    className: 'menu-tank2',
+    coords: spriteMap.tanks.player.yellow.right2,
+  },
+  {
     className: 'pause',
     coords: spriteMap.ui.pause,
   },
