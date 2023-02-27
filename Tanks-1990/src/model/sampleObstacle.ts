@@ -4,8 +4,6 @@ import { ObstacleOptions, LevelMapEntity, direction } from "../interfaces.ts";
 import { spriteMap } from "../view/sprite.ts";
 // @ts-ignore
 import Renderer from "./Renderer.ts";
-// @ts-ignore
-import { Coords } from "./sampleTank.ts";
 
 interface IsHitFrom {
   left: boolean
@@ -21,7 +19,6 @@ export class Obstacle {
   width: number = 32
   height: number = 32
   type: string
-  isBreakable: boolean = false
   canPassThrough: boolean = false
   canShootThrough: boolean = false
   isUnderLayer: boolean = false
@@ -48,7 +45,6 @@ export class Obstacle {
     this.type = obstacleOptions.type;
     switch(this.type) {
       case 'b': // b - brick
-        this.isBreakable = true;
         this.spriteX = spriteMap.obstacles.b.x;
         this.spriteY = spriteMap.obstacles.b.y;
         break;
@@ -168,12 +164,6 @@ export class ObstacleCollection {
     }
     const obstacle = new Obstacle(options, this.renderer);
     this.nextObstacleID += 1;
-    this.renderer.addObstacle(obstacle);
-    Object.defineProperty(this._obstacles, `${options.id}`, {
-      value: obstacle,
-      enumerable: true,
-      configurable: true
-    });
     return obstacle;
   }
 

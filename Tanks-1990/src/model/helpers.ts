@@ -15,14 +15,15 @@ export interface FakeCreature {
   speed: number
 }
 
+/** Рендерит количество очков за убитый танк или подобранный бонус.
+ * Находится в общих хелперах, т.к. используется с инстансами разных классов
+ */
 export function renderScore(creature: FakeCreature, score: number) {
   let i = 0;
   let timeout = 0;
   const drawScoreCallback = () => {
     creature.renderer.add({
-      // @ts-ignore
       spriteX: spriteMap.scores[`score${score}`].x,
-      // @ts-ignore
       spriteY: spriteMap.scores[`score${score}`].y,
       spriteWidth: 64,
       spriteHeight: 64,

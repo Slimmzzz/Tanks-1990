@@ -3,8 +3,6 @@ import { Coords, direction, TankBlockedMoves, TankOptions } from "../interfaces.
 // @ts-ignore
 import Renderer from "./Renderer.ts";
 // @ts-ignore
-import { Obstacle } from "./sampleObstacle.ts";
-// @ts-ignore
 import { spriteMap } from "../view/sprite.ts";
 // @ts-ignore
 import { KeyController } from "../controller/KeyController.ts";
@@ -18,7 +16,6 @@ import { collidesWithCanvasBoundaries, collidesWithObstacles, renderScore } from
 import { Globals } from '../app.ts';
 // @ts-ignore
 import { Pickup } from './Pickup.ts';
-
 
 export default class Tank {
   id: number
@@ -36,7 +33,6 @@ export default class Tank {
   _isMoving: boolean = false
   moveTimeoutID: number = 0
   isEnemy: boolean
-  enemyMoveDirection: string | undefined
   isOnIce: boolean = false
   direction: direction
   ignoreKeyboard: boolean = false
@@ -93,6 +89,8 @@ export default class Tank {
     if (tankOptions.killScore) {
       this.killScore = tankOptions.killScore;
     }
+
+    // Определение типа/цвета танка, связанная с этим логика
     this.tankColor = tankOptions.tankColor || 'yellow';
     this.tankType = tankOptions.tankType;
     this.tankModel = spriteMap.tanks[tankOptions.tankType || 'player'][tankOptions.tankColor || 'yellow'];
@@ -101,6 +99,8 @@ export default class Tank {
       this.tankModel = spriteMap.tanks[this.tankType][this.tankColor];
       this.changeColorTimeout = setTimeout(this.changeColorCallback, 600);
     };
+
+    // Если танк красного цвета - засовываем в него бонус и заставляем его моргать
     if (this.tankColor === 'red') {
       const bonuses = ['helmet', 'clock', 'shovel', 'star', 'grenade', 'tank', 'pistol'];
       bonuses.sort((a, b) => Math.random() - 0.5);
@@ -108,9 +108,10 @@ export default class Tank {
       for (let i = 0; i < bonusesCount; i++) {
         this.bonuses.push(bonuses.pop()!);
       }
-      
       this.changeColorTimeout = setTimeout(this.changeColorCallback, 600);
     }
+
+    // Подбор модели танка в зависимости от направления, типа и цвета
     this.direction = tankOptions.startDirection as direction;
     switch (this.direction) {
       case 'up': this.spriteX = this.tankModel.up1.x; this.spriteY = this.tankModel.up1.y; break;
@@ -118,6 +119,7 @@ export default class Tank {
       case 'right': this.spriteY = this.tankModel.right1.y; this.spriteX = this.tankModel.right1.x; break;
       case 'left': this.spriteY = this.tankModel.left1.y; this.spriteX = this.tankModel.left1.x; break;
     };
+
     this._pingRendererTimeoutCallback = () => {
       this.renderer.add({
         spriteX: this.spriteX,
@@ -134,19 +136,17 @@ export default class Tank {
       }
     };
     this.timeoutID = setTimeout(this._pingRendererTimeoutCallback, 16);
+
+    // Назначение игроку контролера клавиатуры, а врагу - искусственного интеллекта
     if (this.isEnemy) {
       if (!tankOptions.ignoreAIBehaviour && !this.renderer.game.areEnemiesFreezed) {
         this.initEnemyBehavior();
       }
     } else {
-      Object.defineProperty(window, '_tank', {
-        value: this,
-        enumerable: true,
-        configurable: true
-      })
       this.initKeyController();
     }
 
+    // Анимация неуязвимости
     this.invincibleAnimationCallback = () => {
       this.invincibleFrameIterator += 1;
       if (this.invincibleFrameIterator > 5) {
@@ -167,12 +167,15 @@ export default class Tank {
     }
 
     if (!this.isEnemy) {
+      // Игрок стартует неуязвимым
       this.isInvincible = true;
       this.startInvincibleAnimation();
       setTimeout(() => {
         this.isInvincible = false;
         clearTimeout(this.invincibleAnimationTimeout);
       }, 3000);
+
+      // Обработчики событий повышения уровня
       document.addEventListener('game:update-player-level', () => {
         if (this.playerLevel < 4) {
           this.playerLevel += 1;
@@ -180,7 +183,6 @@ export default class Tank {
           Globals.playerLevel = this.playerLevel;
         }
       });
-  
       document.addEventListener('game:pistol', () => {
         if (this.playerLevel < 3) {
           this.playerLevel = 3;
@@ -188,7 +190,6 @@ export default class Tank {
         document.dispatchEvent(new CustomEvent('game:update-player-level'));
       });
     }
-
     this.animateSpawn();
   }
 
@@ -274,14 +275,12 @@ export default class Tank {
           }
         }
       }
-      // console.log(collidesWithTank);
       if (collidesWithTank) {
         return false;
       }
     }
 
     // Collision with pickups
-
     if (!this.isEnemy) {
       let maybePickup;
       for (const pickup of this.renderer.pickups) {
@@ -338,32 +337,12 @@ export default class Tank {
         }
       }  
       if (maybePickup) {
-        Globals.audio.takeBonus.play();
-        this.renderer.game.score += 500;
-        renderScore(maybePickup, 500);
         maybePickup.action();
         maybePickup.destroy();
       }
     }
 
-    // Collision with Eagle
-    // let hitsEagle: boolean = false;
-    // if (!Globals.isGameOver) {
-    //   if (direction === 'right') {
-
-    //   }
-    //     if (this.dy > 32 * 24) {
-    //       if (this.dx > 32 * 12 && this.dx < 32 * 14) {
-    //         hitsEagle = true;
-    //       }
-    //     }
-    // }
-    // if (hitsEagle) {
-    //   return false;
-    // }
-
     // Collision with obstacles
-
     let maybeObstacles = collidesWithObstacles(this, direction);
     
     if (Array.isArray(maybeObstacles) && maybeObstacles.length) {
@@ -586,17 +565,14 @@ export default class Tank {
     this.destroy();
     if (this.isEnemy) {
       this.renderer.game.enemiesToGo -= 1;
-      console.log('Enemies left: ', this.renderer.game.enemiesToGo)
       if (this.renderer.game.enemiesToGo > 0) {
         this.renderer.game.spawnTankTimeout = setTimeout(this.renderer.game.spawnTankCallback, 80);
       }
       this.renderer.game.score += this.killScore;
       renderScore(this, this.killScore);
       this.renderer.game.enemiesKilledByScore[`${this.killScore}`] += 1;
+
       document.dispatchEvent(new CustomEvent('ui:update-score', {
-        /*
-          TODO
-        */
         detail: {
           score: this.renderer.game.score
         }
@@ -626,7 +602,7 @@ export default class Tank {
           detail: {
             health: this.renderer.game.playerLives
           }
-        }))
+        }));
         this.renderer.tanks.push(new Tank({
           id: 1,
           x: 263,
@@ -647,7 +623,7 @@ export default class Tank {
             score: this.renderer.game.score,
             enemiesKilledByScore: this.renderer.game.enemiesKilledByScore
           }
-        }))
+        }));
       }
     }
   }
@@ -680,7 +656,7 @@ export default class Tank {
       'd': () => { _move('right'); },
     }, 16);  
 
-    let shootController = new KeyController({
+    new KeyController({
       ' ': () => { this.shoot(); }
     });
   }

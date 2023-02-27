@@ -1,11 +1,9 @@
 // @ts-ignore
 import { TankBlockedMoves, direction } from '../interfaces';
 // @ts-ignore
-import sprite, { spriteMap } from '../view/sprite.ts'
+import { spriteMap } from '../view/sprite.ts'
 // @ts-ignore
 import Renderer from './Renderer.ts'
-// @ts-ignore
-import { Obstacle } from "./sampleObstacle.ts";
 // @ts-ignore
 import Tank from './sampleTank.ts';
 // @ts-ignore
@@ -14,9 +12,6 @@ import * as Helpers from './helpers.ts';
 import { Globals } from '../app.ts';
 // @ts-ignore
 import { gameOver } from '../view/Scene/gameOver/gameOver.ts';
-
-// export let scoreArray: number[] = []
-
 
 interface BulletOptions {
   id: number
@@ -40,7 +35,6 @@ export class Bullet {
   speed: number = 2.5
   id: number
   ignoreIce: boolean = false
-  ignoreKeyboard: boolean = false
   blockedMoves: TankBlockedMoves = {
     left: false,
     right: false,
@@ -51,7 +45,7 @@ export class Bullet {
   tank: Tank
   bulletMoveInterval: number = 0
   isBonusBullet: boolean = false
-
+  skipExplode: boolean = false
   _pingRendererTimeoutCallback: () => void
 
   constructor(bulletOptions: BulletOptions, renderer: Renderer, tank: Tank) {
@@ -126,11 +120,11 @@ export class Bullet {
     // Collision with Eagle
     let hitsEagle: boolean = false;
     if (!Globals.isGameOver) {
-        if (this.dy > 32 * 24) {
-          if (this.dx > 32 * 12 && this.dx < 32 * 14) {
-            hitsEagle = true;
-          }
+      if (this.dy > 32 * 24) {
+        if (this.dx > 32 * 12 && this.dx < 32 * 14) {
+          hitsEagle = true;
         }
+      }
     }
 
     if (hitsEagle) {
@@ -143,7 +137,7 @@ export class Bullet {
           score: this.renderer.game.score,
           enemiesKilledByScore: this.renderer.game.enemiesKilledByScore
         }
-      }))
+      }));
       this.bulletFly = false;
       gameOver();
       return;
@@ -195,14 +189,20 @@ export class Bullet {
           }
         }
       }
+      return;
     }
-    // if(maybeTank && location.hash == '#stage'){
-      
-    //   if(maybeTank.isAlive == false && maybeTank.isEnemy == true){
-    //     scoreArray.push(maybeTank.killScore)
-    //     console.log(scoreArray)
-    //   }
-    // }
+
+    // Collision with bullets 
+    for (let bullet of this.renderer.bullets) {
+      if (this.id !== bullet.id) {
+        if (Math.abs(this.dx - bullet.dx) < 10 && Math.abs(this.dy - bullet.dy) < 10) {
+          this.bulletFly = false;
+          bullet.bulletFly = false;
+          this.skipExplode = true;
+          bullet.skipExplode = true;
+        }
+      }
+    }
   }
   
   move(direction: string) {
@@ -243,7 +243,7 @@ export class Bullet {
             this.destroy()
           }
         }, 16)
-        break
+        break;
     }
   }
 
@@ -288,9 +288,12 @@ export class Bullet {
       }, 50)
   }
 
-  destroy(isExploding: boolean = true) {
+  destroy() {
     clearInterval(this.bulletMoveInterval);
-    if (isExploding) {
+    if (this.skipExplode) {
+      clearTimeout(this.timeoutID);
+      this.isAlive = false;
+    } else {
       this.explosion();
     }
     if (!this.isBonusBullet) {

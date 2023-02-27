@@ -118,29 +118,6 @@ export default function enemyBehaviour(tank: Tank) {
         tank.direction = possibleDirection;
       }
     }
-    // let possibleLeftDirection = tank.direction === 'up' ? 'left' :
-    //   tank.direction === 'left' ? 'down' :
-    //   tank.direction === 'down' ? 'right' : 'up';
-
-    // let canTurnLeft = tank.checkCollisions(possibleLeftDirection);
-    // if (canTurnLeft) {
-    //   let turnLeftChance = Math.random() > 0.9;
-    //   if (turnLeftChance) {
-    //     tank.direction = possibleLeftDirection;
-    //   }
-    // }
-
-    // let possibleRightDirection = tank.direction === 'up' ? 'right' :
-    //   tank.direction === 'right' ? 'down' :
-    //   tank.direction === 'down' ? 'left' : 'up';
-
-    // let canTurnRight = tank.checkCollisions(possibleRightDirection);
-    // if (canTurnRight) {
-    //   let turnRightChance = Math.random() > 0.9;
-    //   if (turnRightChance) {
-    //     tank.direction = possibleRightDirection;
-    //   }
-    // }
     
     tank.move(tank.direction);
     tank.moveAiTimeout = setTimeout(moveCallback, 16);

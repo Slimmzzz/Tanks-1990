@@ -1,5 +1,4 @@
 // INTERFACES
-
 export interface KeyCallbackMap {
   [key: string]: () => void
 };

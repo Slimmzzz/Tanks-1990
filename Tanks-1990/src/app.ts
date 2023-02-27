@@ -1,7 +1,5 @@
 import './style.scss';
 // @ts-ignore
-import main from "./controller/controller.ts";
-// @ts-ignore
 import { renderMenu } from './view/Scene/menu/mainMenu.ts';
 // @ts-ignore
 import { addSizeBar, updateEnemy, setHealth } from './view/Scene/sizebar/sizebar.ts';
@@ -40,50 +38,34 @@ export const Globals = {
     tankDamage: new Audio('/public/sounds/tank-damage.mp3'),
   }
 }
-let gameID = 1;
-// Globals.audio.level.volume = 0.6;
 Globals.audio.level.loop = true;
 for (const sound of Object.values(Globals.audio)) {
   sound.volume = 0.1;
 }
 
-Object.defineProperty(window, '_globals', {
-  enumerable: true,
-  configurable: true,
-  value: Globals
-})
-
 let game: Game | undefined;
 location.hash = 'menu';
 renderMenu();
 
-
-document.addEventListener('load', () => {
-});
 window.addEventListener('hashchange', () =>{
-  // if(location.hash =='#test'){
-  //   lvlScore(0, Globals.currentLevel, Globals.scoreLevel)
-  // }
   if (location.hash == '#menu') {
     renderMenu();
   }
   if (location.hash == '#stage') {
-    // renderMenu();
-    stageRender(Globals.currentLevel)
+    stageRender(Globals.currentLevel);
     setTimeout(() => {
       addSizeBar(Globals.currentLevel);
       updateEnemy(Game.enemiesCount);
-      game = new Game(gameID);
-      gameID += 1;
+      game = new Game();
     }, 2000);
   } 
   if(location.hash == '#score'){
-    renderScoreMenu(Globals.highScore)
+    renderScoreMenu(Globals.highScore);
   }
   if(location.hash == '#help') {
     help();
   }
-})
+});
 
 let gameState;
 if (gameState = window.localStorage.getItem('GameState')) {
@@ -98,13 +80,13 @@ if (gameState = window.localStorage.getItem('GameState')) {
 document.addEventListener('ui:remove-enemy-tank', (e) => {
   const { tanks } = (<CustomEvent>e).detail;
   updateEnemy(tanks);
-})
+});
 
 document.addEventListener('ui:update-health', (e) => {
   const { health } = (<CustomEvent>e).detail;
   setHealth(health);
   Globals.playerLives = health;
-})
+});
 
 document.addEventListener('ui:game-over', (e) => {
   const { score, enemiesKilledByScore } = (<CustomEvent>e).detail;
@@ -124,10 +106,10 @@ document.addEventListener('ui:game-over', (e) => {
       location.reload();
     }, 8000)
   });
-})
+});
 
 document.addEventListener('ui:complete-level', (e) => {
-  const { playerTankLevel, playerLives, score, enemiesKilledByScore } = (<CustomEvent>e).detail;
+  const { score, enemiesKilledByScore } = (<CustomEvent>e).detail;
   game!.destroyLevel().then(() => {
     game = undefined;
     Globals.scoreGame += score;
@@ -142,29 +124,6 @@ document.addEventListener('ui:complete-level', (e) => {
     setTimeout(() => {
       location.hash = '#menu';
       location.reload();
-    }, 7000)
-    // setTimeout(() => {
-    //   stageRender(Globals.currentLevel)
-    // }, 11000);
-    // setTimeout(() => {
-    //   addSizeBar(Globals.currentLevel);
-    //   updateEnemy(Game.enemiesCount);
-    //   game = new Game(gameID, playerLives, playerTankLevel);
-    //   gameID += 1;
-    // }, 13000);
+    }, 7000);
   });
-})
-
-  // TODO использовать score и enemiesKilledByScore в статистике
-
-// window.addEventListener('keydown', (e)=>{
-//   if (e.keyCode == 70) {
-//     removeHealth()
-//   }
-// })
-
-// const ghLogo = document.querySelector('.ghLogo') as HTMLImageElement;
-  
-// ghLogo.addEventListener('click', ()=>{
-//   window.open('https://github.com/Slimmzzz/Tanks-1990')
-// })
+});

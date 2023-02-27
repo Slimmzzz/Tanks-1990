@@ -1,4 +1,4 @@
-import { Coords, DrawOptions } from "../interfaces";
+import { DrawOptions } from "../interfaces";
 // @ts-ignore
 import sprite from "../view/sprite.ts"
 import { Bullet } from "./Bullet";
@@ -21,11 +21,10 @@ export default class Renderer {
   drawStack: DrawOptions[] = []
   timeoutID: number | undefined
   isActive: boolean = false
-  obstacles: Obstacle[] = []
   tanks: Tank[] = []
   bullets: Bullet[] = []
   pickups: Pickup[] = []
-  bulletNextID: number = 1
+  nextBulletID: number = 1
   obstacleCoordsMatrix: Obstacle[][] = [];
   game: Game | undefined = undefined
   eagle: Eagle | null = null;
@@ -71,19 +70,11 @@ export default class Renderer {
     }
   }
 
-  addObstacle(obstacle: Obstacle) {
-    this.obstacles.push(obstacle);
-  }
-
   destroy() {
     if (this.timeoutID) {
       clearTimeout(this.timeoutID);
     }
     this.isActive = false;
     this.canvas.remove();
-    if (window.hasOwnProperty('_renderer')) {
-      // @ts-ignore
-      delete window['_renderer'];
-    }
   }
 }

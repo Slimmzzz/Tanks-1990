@@ -1,7 +1,7 @@
 // @ts-ignore
 import { Globals } from '../app.ts';
 // @ts-ignore
-import { LevelMapEntity, Coords } from '../interfaces.ts';
+import { Coords } from '../interfaces.ts';
 // @ts-ignore
 import { Eagle } from '../model/Eagle.ts';
 // @ts-ignore
@@ -49,11 +49,9 @@ export default class Game {
     '300': 0,
     '400': 0,
   }
-  id: number;
   
-  constructor(id: number) {
+  constructor() {
     Globals.isGameOver = false;
-    this.id = id;
     const canvasRoot = document.createElement('div');
     canvasRoot.setAttribute('style', 'width: max-content; margin-left: auto; position: relative; border: 1px solid #EEE');
     document.body.appendChild(canvasRoot);
@@ -62,15 +60,6 @@ export default class Game {
     this.forestRenderer = new Renderer(canvasRoot, 'position: absolute; z-index: 2; top: 0; left: 50%; transform: translateX(-50%);');
     Globals.audio.gameStart.play();
 
-    // DEBUG, DELETE
-    Object.defineProperty(window, '_renderer', { 
-      value: this.renderer,
-      enumerable: true,
-      configurable: true,
-    });
-    // END DEBUGg
-
-    // @ts-ignore
     this.level = new ObstacleCollection(this.renderer, levels[`${(Globals.currentLevel)}`].map((row: string[]) => {
       return row.map((cell: string) => {
         return cell === 'f' ? '' : cell;
@@ -107,21 +96,7 @@ export default class Game {
         health: this.playerLives
       }
     }))
-    // this.renderer.tanks.push(new Tank({
-    //   id: this.currentTankId,
-    //   x: 2,
-    //   y: 2,
-    //   startDirection: 'left',
-    //   isEnemy: true,
-    //   tankType: 'enemy4',
-    //   tankColor: 'red',
-    //   tankModelWidth: spriteMap.tanks.enemy1.width,
-    //   tankModelHeight: spriteMap.tanks.enemy1.height,
-    //   hp: 10 || spriteMap.tanks[`enemy4`].hp || 3,
-    //   ignoreAIBehaviour: true
-    // }, this.renderer))
-    // this.currentTankId += 1;
-
+    
     for (const { x, y } of this.enemyTankSpawns) {
       const typeIndex: number = Math.ceil(Math.random() * 4);
       this.renderer.tanks.push(new Tank({
@@ -132,10 +107,9 @@ export default class Game {
         isEnemy: true,
         tankType: `enemy${typeIndex}`,
         tankColor: Math.random() > 0.4 ? 'grey' : Math.random() > 0.8 ? 'green' : 'red',
-        // tankColor: 'red',
         tankModelWidth: spriteMap.tanks[`enemy${typeIndex}`].width,
         tankModelHeight: spriteMap.tanks[`enemy${typeIndex}`].height,
-        hp: (spriteMap.tanks[`enemy${typeIndex}`].hp || 1) + 1,
+        hp: spriteMap.tanks[`enemy${typeIndex}`].hp || 1,
         speed: spriteMap.tanks[`enemy${typeIndex}`].speed || 1,
         killScore: spriteMap.tanks[`enemy${typeIndex}`].killScore,
       }, this.renderer));
@@ -159,7 +133,7 @@ export default class Game {
           tank.initEnemyBehavior();
         }
       }
-    })
+    });
 
     const onKeyUpListener = onTankMoveKeyUpFactory(this.playerTank);
     window.addEventListener('keyup', onKeyUpListener);
@@ -168,7 +142,6 @@ export default class Game {
   tryToSpawnEnemyTank() {
     let spawns = [...this.enemyTankSpawns];
     spawns.sort((a, b) => Math.random() - 0.5);
-    let _coords: Coords | undefined;
     for (let { x, y } of spawns) {
       if (this.renderer.tanks.every((tank: Tank) => {
         return !(
@@ -188,10 +161,9 @@ export default class Game {
           isEnemy: true,
           tankType: `enemy${typeIndex}`,
           tankColor: Math.random() > 0.4 ? 'grey' : Math.random() > 0.8 ? 'green' : 'red',
-          // tankColor: 'red',
           tankModelWidth: spriteMap.tanks[`enemy${typeIndex}`].width,
           tankModelHeight: spriteMap.tanks[`enemy${typeIndex}`].height,
-          hp: (spriteMap.tanks[`enemy${typeIndex}`].hp || 1) + 1,
+          hp: spriteMap.tanks[`enemy${typeIndex}`].hp || 1,
           speed: spriteMap.tanks[`enemy${typeIndex}`].speed || 1,
           killScore: spriteMap.tanks[`enemy${typeIndex}`].killScore,
         }, this.renderer));
@@ -199,27 +171,6 @@ export default class Game {
         break;
       }
     }
-      // for (let tank of this.renderer.tanks) {
-      //   if (tank.dx === x ||
-      //       (tank.dx > x && tank.dx < x + 60) ||
-      //       (tank.dx + tank.width > x && tank.dx < x) ||
-      //       (tank.dy < y && tank.dy + tank.heigth > y) ||
-      //       (tank.dy > y && tank.dy < y + 60)) {
-      //         continue;
-      //       } else {
-      //         _coords = { x, y };
-      //         break;
-      //       }
-      // }
-      // if (typeof _coords !== 'undefined') {
-      //   break;
-      // }
-    // }
-    // if (typeof _coords !== 'undefined') {
-    // } else {
-    //   console.log('Unnable to spawn tank 104');
-    //   console.log(this.renderer.tanks);
-    // }
   }
   
   destroyLevel() {
@@ -250,11 +201,4 @@ export default class Game {
       }, 3500)
     });
   }
-  
 }
-
-// type levelCollectionIndex = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16';
-
-// interface LevelCollection {
-//   [key: string]: LevelMapEntity[]
-// }

@@ -10,6 +10,8 @@ import Tank from './sampleTank.ts';
 import { Globals } from '../app.ts';
 // @ts-ignore
 import { Obstacle } from './sampleObstacle.ts';
+// @ts-ignore
+import { renderScore } from './helpers.ts';
 
 export class Pickup {
   renderer: Renderer
@@ -62,7 +64,9 @@ export class Pickup {
   }
 
   action() {
-    Globals.scoreGame += 500;
+    Globals.audio.takeBonus.play();
+    this.renderer.game.score += 500;
+    renderScore(Object.assign(this, {speed: 1}), 500);
     switch(this.type) {
       case 'shovel': this.shovel(); break;
       case 'helmet': this.helmet(); break; 
