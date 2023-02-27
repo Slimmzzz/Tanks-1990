@@ -3,7 +3,7 @@ import "./menu.scss";
 
 const menu = `
 <div class='wrapper'>
-<img class='titleImg' src='/src/view/Scene/img/battle_city.png'>
+<img class='titleImg' src='/public/img/battle_city.png'>
 <div class='menuWrapper'>
 <div class='tank'>
 <img class='tankImg sprite menu-tank' src='data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 52 52" width="52" height="52"><rect fill="none" stroke="none" width="52" height="52" /></svg>'>

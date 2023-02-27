@@ -36,7 +36,7 @@ export function updateEnemy(num: number){
   let enemy = document.querySelector('.enemy') as HTMLElement
   let enemyArray =[]
   for (let i = 0; i < num; i++) {
-    // enemyArray.push(`<img src='/src/view/Scene/img/enemy.png'>`)
+    // enemyArray.push(`<img src='/public/img/enemy.png'>`)
     enemyArray.push(`<span class="sprite is-32 enemy-tank"></span>`)
   }
   enemy.innerHTML = enemyArray.join('')

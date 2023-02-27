@@ -37,10 +37,10 @@ export function lvlScore(hiScore: number = 0, stage:number, scoreLevel: number, 
 <p class='PTSArrow4'><-</p>
 </div>
 <div class='enemyTank'>
-<img class='firstTankImg' src='/src/view/Scene/img/basic.png'>
-<img class='secondTankImg' src='/src/view/Scene/img/fast.png'>
-<img class='thirdTankImg' src='/src/view/Scene/img/power.png'>
-<img class='fourthTankImg' src='/src/view/Scene/img/armor.png'>
+<img class='firstTankImg' src='/public/img/basic.png'>
+<img class='secondTankImg' src='/public/img/fast.png'>
+<img class='thirdTankImg' src='/public/img/power.png'>
+<img class='fourthTankImg' src='/public/img/armor.png'>
 </div>
 </div>
 <div class='killsTanksTotal'>
