@@ -94,17 +94,15 @@ document.addEventListener('ui:game-over', (e) => {
   game!.destroyLevel().then(() => {
     game = undefined;
     Globals.scoreGame += score;
-    lvlScore(Globals.highScore, Globals.currentLevel, Globals.scoreGame, enemiesKilledByScore);
-
     if (Globals.scoreGame > Globals.highScore) {
       window.localStorage.setItem('highScore', String(Globals.scoreGame));
     }
     window.localStorage.removeItem('GameState');
 
-    setTimeout(() => {
+    lvlScore(Globals.highScore, Globals.currentLevel, Globals.scoreGame, enemiesKilledByScore).then(() => {
       location.hash = '#menu';
       location.reload();
-    }, 8000)
+    });
   });
 });
 
@@ -113,17 +111,17 @@ document.addEventListener('ui:complete-level', (e) => {
   game!.destroyLevel().then(() => {
     game = undefined;
     Globals.scoreGame += score;
-    lvlScore(Globals.highScore, Globals.currentLevel, Globals.scoreGame, enemiesKilledByScore);
     Globals.currentLevel +=1
     window.localStorage.setItem('GameState', JSON.stringify({
       currentLevel: Globals.currentLevel,
       scoreGame: Globals.scoreGame,
       playerLives: Globals.playerLives,
       playerLevel: Globals.playerLevel,
-    }))
-    setTimeout(() => {
+    }));
+    
+    lvlScore(Globals.highScore, Globals.currentLevel, Globals.scoreGame, enemiesKilledByScore).then(() => {
       location.hash = '#menu';
       location.reload();
-    }, 7000);
+    });
   });
 });
