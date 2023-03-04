@@ -1,12 +1,4 @@
 // @ts-ignore
-import { Globals } from '../../../app.ts'
-// @ts-ignore
-import { scoreArray } from '../../../model/Bullet.ts'
-// @ts-ignore
-import { lvlScore } from '../lvlScore/lvlScore.ts'
-// @ts-ignore
-import { renderMenu } from '../menu/mainMenu.ts'
-// @ts-ignore
 import './gameOver.scss'
 
 export function gameOver() {
@@ -20,8 +12,4 @@ export function gameOver() {
   setTimeout(function () {
     gameOverImg.style.transform = 'translateY(-660px)'
   }, 100)
-    setTimeout(() =>{
-location.hash ='menu'
-renderMenu()
-    }, 11000)
 }
