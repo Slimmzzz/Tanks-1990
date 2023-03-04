@@ -1,6 +1,14 @@
 // @ts-ignore
 import './lvlScore.scss'
 
+/**
+ * Renders 'results' view and triggers step-by-step score count.
+ * @param hiScore Current high-score of the game
+ * @param stage Current stage (or last stage before game over)
+ * @param scoreLevel Score gained at last played level
+ * @param enemiesKilledByScore Object with kills count grouped by enemy types
+ * @returns Promise that resolves 3s after all scores were counted. `location.reload()` happens straight after resolving.
+ */
 export function lvlScore(hiScore: number = 0, stage:number, scoreLevel: number, enemiesKilledByScore: object): Promise<void> {
   return new Promise((res) => {
     document.body.innerHTML = `
@@ -54,6 +62,13 @@ export function lvlScore(hiScore: number = 0, stage:number, scoreLevel: number, 
   });
 }
 
+/**
+ * One tick of score increment.
+ * Triggers per every kill and updates killed tanks count by 1.
+ * @param prev Previous-step kills count
+ * @param score Enemy's kill score
+ * @returns Promise that resolves when the scores are incremented (with 0.3s timeout)
+ */
 function singlePointCounter(prev: number, score: number) : Promise<void> {
   return new Promise((res) => {
     setTimeout(() => {
@@ -65,8 +80,14 @@ function singlePointCounter(prev: number, score: number) : Promise<void> {
   });
 }
 
+/**
+ * One row's (one enemy type) kill-scores count.
+ * @param killedTanks Count of killed tanks per one type
+ * @param score Kill score of enemy type
+ * @returns Promise that resolves 0.5s after all kills of a certain enemy types are count
+ */
 function singleTankCounter(killedTanks: number, score: number) : Promise<void> {
-  return new Promise(async res => {
+  return new Promise(async (res) => {
     for (let i = 0; i < killedTanks; i++) {
       await singlePointCounter(i, score);
       const total = document.querySelector('.killsTanksTotalScore') as HTMLElement;
@@ -79,6 +100,11 @@ function singleTankCounter(killedTanks: number, score: number) : Promise<void> {
   });
 }
 
+/**
+ * Main method of step-by-step kills counting.
+ * @param enemiesKilledByScore Object with kills count grouped by enemy types
+ * @returns Promise that resolves when all kills of all enemy types are counted
+ */
 async function RenderPoints(enemiesKilledByScore: object): Promise<void> {
   const entries = Object.entries(enemiesKilledByScore);
   for (let i = 0; i < entries.length; i++) {
